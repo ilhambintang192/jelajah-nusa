@@ -4,6 +4,10 @@
  * Entry point untuk deployment di Vercel Serverless Function.
  */
 
+// Sembunyikan pesan deprecation notices di lingkungan serverless PHP 8.4+
+ini_set('display_errors', '0');
+error_reporting(E_ALL & ~E_DEPRECATED & ~E_USER_DEPRECATED);
+
 // Siapkan folder sementara yang writable di /tmp untuk Laravel view & cache
 $writableDirs = [
     '/tmp/storage/framework/views',
