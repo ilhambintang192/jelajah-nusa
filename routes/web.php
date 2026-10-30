@@ -40,6 +40,51 @@ Route::get('/', function () {
 Route::get('/paket', [PaketController::class, 'index'])->name('paket.index');
 Route::get('/paket/{id}', [PaketController::class, 'show'])->name('paket.show');
 
+// Inisialisasi Database Cloud Sekali Klik (Migrate & Seed Otomatis)
+Route::get('/setup-database', function () {
+    try {
+        \Illuminate\Support\Facades\Artisan::call('migrate', [
+            '--force' => true,
+        ]);
+        $migrateOutput = \Illuminate\Support\Facades\Artisan::output();
+
+        \Illuminate\Support\Facades\Artisan::call('db:seed', [
+            '--force' => true,
+        ]);
+        $seedOutput = \Illuminate\Support\Facades\Artisan::output();
+
+        return response("
+            <div style='font-family: system-ui, sans-serif; max-width: 700px; margin: 40px auto; padding: 32px; border-radius: 12px; background: #ffffff; box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1); border: 1px solid #e2e8f0;'>
+                <div style='display: flex; align-items: center; gap: 12px; margin-bottom: 16px;'>
+                    <div style='background: #dcfce7; color: #16a34a; width: 44px; height: 44px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 24px; font-weight: bold;'>✓</div>
+                    <h2 style='color: #0f172a; margin: 0; font-size: 20px;'>Database Jelajah Nusa Berhasil Diinisialisasi!</h2>
+                </div>
+                <p style='color: #475569; font-size: 14px; line-height: 1.6; margin-bottom: 20px;'>
+                    Semua tabel database (paket wisata, jadwal, kendaraan, pemesanan, tiket) beserta data awal berhasil dibuat di database cloud Anda.
+                </p>
+                <div style='background: #0f172a; color: #38bdf8; padding: 16px; border-radius: 8px; font-family: monospace; font-size: 12px; max-height: 250px; overflow-y: auto; margin-bottom: 24px; white-space: pre-wrap;'>" . htmlspecialchars($migrateOutput . "\n" . $seedOutput) . "</div>
+                <div style='display: flex; gap: 12px;'>
+                    <a href='/' style='background: #0d9488; color: #ffffff; padding: 10px 20px; border-radius: 8px; text-decoration: none; font-size: 14px; font-weight: 600;'>Kunjungi Halaman Beranda &rarr;</a>
+                    <a href='/login' style='background: #f1f5f9; color: #334155; padding: 10px 20px; border-radius: 8px; text-decoration: none; font-size: 14px; font-weight: 600;'>Masuk / Login &rarr;</a>
+                </div>
+            </div>
+        ", 200);
+    } catch (\Throwable $e) {
+        return response("
+            <div style='font-family: system-ui, sans-serif; max-width: 700px; margin: 40px auto; padding: 32px; border-radius: 12px; background: #ffffff; box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1); border: 1px solid #fecaca;'>
+                <div style='display: flex; align-items: center; gap: 12px; margin-bottom: 16px;'>
+                    <div style='background: #fee2e2; color: #dc2626; width: 44px; height: 44px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 24px; font-weight: bold;'>✕</div>
+                    <h2 style='color: #991b1b; margin: 0; font-size: 20px;'>Gagal Menginisialisasi Database</h2>
+                </div>
+                <p style='color: #7f1d1d; font-size: 14px; line-height: 1.6; margin-bottom: 16px;'>
+                    Pesan Kesalahan: <strong>" . htmlspecialchars($e->getMessage()) . "</strong>
+                </p>
+                <div style='background: #0f172a; color: #f87171; padding: 16px; border-radius: 8px; font-family: monospace; font-size: 12px; max-height: 250px; overflow-y: auto; margin-bottom: 24px; white-space: pre-wrap;'>" . htmlspecialchars($e->getTraceAsString()) . "</div>
+            </div>
+        ", 500);
+    }
+});
+
 // Verifikasi Keaslian Tiket (Publik / QR Code)
 Route::get('/verifikasi/{kode?}', [TiketController::class, 'verifikasiPublik'])->name('tiket.verifikasi.kode');
 
