@@ -35,6 +35,11 @@
     "VIEW_COMPILED_PATH": "/tmp/storage/framework/views",
     "CACHE_STORE": "array",
     "SESSION_DRIVER": "cookie",
-    "LOG_CHANNEL": "stderr"
+    "LOG_CHANNEL": "stderr",
+    "APP_PACKAGES_CACHE": "/tmp/bootstrap/cache/packages.php",
+    "APP_SERVICES_CACHE": "/tmp/bootstrap/cache/services.php",
+    "APP_CONFIG_CACHE": "/tmp/bootstrap/cache/config.php",
+    "APP_ROUTES_CACHE": "/tmp/bootstrap/cache/routes-v7.php",
+    "APP_EVENTS_CACHE": "/tmp/bootstrap/cache/events.php"
   }
 }
