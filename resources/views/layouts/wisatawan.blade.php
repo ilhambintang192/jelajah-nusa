@@ -22,7 +22,7 @@
             <div class="flex items-center justify-between h-18 sm:h-20">
                 
                 <!-- Logo Brand -->
-                <a href="{{ route('paket.index') }}" class="flex items-center gap-3 group">
+                <a href="{{ route('beranda') }}" class="flex items-center gap-3 group">
                     <div class="w-10 h-10 rounded-full bg-teal-700 flex items-center justify-center text-white shadow-sm group-hover:bg-teal-800 transition">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <circle cx="12" cy="12" r="10" stroke-width="2"/>
@@ -36,12 +36,12 @@
 
                 <!-- Desktop Navigation Links -->
                 <nav class="hidden md:flex items-center gap-2 text-sm font-semibold text-slate-600">
-                    <a href="{{ route('paket.index') }}" 
-                       class="px-4 py-2 rounded-xl transition {{ request()->routeIs('paket.index') && !request()->query('cari') && !request()->query('destinasi') ? 'text-teal-700 font-bold' : 'hover:text-slate-900' }}">
+                    <a href="{{ route('beranda') }}" 
+                       class="px-4 py-2 rounded-xl transition {{ request()->routeIs('beranda') ? 'text-teal-700 font-bold bg-teal-50/60' : 'hover:text-slate-900' }}">
                         Beranda
                     </a>
                     <a href="{{ route('paket.index') }}" 
-                       class="px-4 py-2 rounded-xl transition {{ request()->routeIs('paket.*') ? 'text-teal-700 font-bold' : 'hover:text-slate-900' }}">
+                       class="px-4 py-2 rounded-xl transition {{ request()->routeIs('paket.*') ? 'text-teal-700 font-bold bg-teal-50/60' : 'hover:text-slate-900' }}">
                         Paket Wisata
                     </a>
                     <a href="{{ route('custom-trip.index') }}" 
@@ -124,6 +124,7 @@
 
             <!-- Mobile Dropdown Menu -->
             <div x-show="mobileMenuOpen" x-transition class="md:hidden border-t border-slate-200 py-4 space-y-2 text-sm font-semibold" style="display: none;">
+                <a href="{{ route('beranda') }}" class="block px-4 py-2 rounded-xl text-slate-700 hover:bg-slate-100">Beranda</a>
                 <a href="{{ route('paket.index') }}" class="block px-4 py-2 rounded-xl text-slate-700 hover:bg-slate-100">Paket Wisata</a>
                 <a href="{{ route('custom-trip.index') }}" class="block px-4 py-2 rounded-xl text-slate-700 hover:bg-slate-100">Custom Trip</a>
                 <a href="{{ route('tiket.verifikasi.kode') }}" class="block px-4 py-2 rounded-xl text-slate-700 hover:bg-slate-100">Cek Keaslian Tiket</a>
@@ -193,12 +194,12 @@
     <footer class="bg-[#101d2d] text-slate-400 text-sm mt-20 border-t border-slate-800">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
             <div class="space-y-4">
-                <div class="flex items-center gap-3">
+                <a href="{{ route('beranda') }}" class="flex items-center gap-3">
                     <div class="w-8 h-8 rounded-full bg-teal-600 flex items-center justify-center text-white font-bold">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" stroke-width="2"/><polygon points="12,7 15,15 12,13 9,15" fill="currentColor"/></svg>
                     </div>
                     <span class="text-lg font-bold text-white">Jelajah Nusa</span>
-                </div>
+                </a>
                 <p class="text-xs text-slate-400">
                     Sistem Informasi Travel dan Agen Wisata · Surakarta, Jawa Tengah
                 </p>

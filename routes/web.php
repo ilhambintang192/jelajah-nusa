@@ -17,6 +17,7 @@ use App\Http\Controllers\Admin\TiketController as AdminTiketController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CustomTripController;
 use App\Http\Controllers\FileAccessController;
+use App\Http\Controllers\HomeController;
 use App\Http\Controllers\PaketController;
 use App\Http\Controllers\PasswordResetController;
 use App\Http\Controllers\PembayaranController;
@@ -33,10 +34,10 @@ use Illuminate\Support\Facades\Route;
 |--------------------------------------------------------------------------
 */
 
-// Beranda & Katalog Paket Wisata (Publik)
-Route::get('/', function () {
-    return redirect()->route('paket.index');
-});
+// Beranda Utama & Landing Page (Publik)
+Route::get('/', [HomeController::class, 'index'])->name('beranda');
+
+// Katalog Paket Wisata (Publik)
 Route::get('/paket', [PaketController::class, 'index'])->name('paket.index');
 Route::get('/paket/{id}', [PaketController::class, 'show'])->name('paket.show');
 

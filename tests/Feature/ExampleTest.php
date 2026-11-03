@@ -13,10 +13,15 @@ class ExampleTest extends TestCase
      */
     public function test_the_application_returns_a_successful_response(): void
     {
-        $response = $this->get('/');
-        $response->assertRedirect(route('paket.index'));
+        // 1. Halaman Beranda Utama (Landing Page)
+        $homeResponse = $this->get('/');
+        $homeResponse->assertStatus(200);
+        $homeResponse->assertSee('Jelajah Nusa');
+        $homeResponse->assertSee('Open Trip &amp; Custom Trip', false);
 
+        // 2. Halaman Katalog Paket Wisata
         $catalogResponse = $this->get(route('paket.index'));
         $catalogResponse->assertStatus(200);
+        $catalogResponse->assertSee('Katalog Paket Wisata');
     }
 }
