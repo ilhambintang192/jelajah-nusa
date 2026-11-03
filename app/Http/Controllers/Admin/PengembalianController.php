@@ -26,21 +26,43 @@ class PengembalianController extends Controller
             ->orderBy('id', 'desc')
             ->paginate(15);
 
-        // Cari pesanan yang bisa diproses pengembalian (terdampak penundaan/pembatalan jadwal)
-        $pemesananTerdampak = Pemesanan::with(['user', 'jadwal.paket', 'pembayaran'])
-            ->whereHas('jadwal', function ($q) {
-                $q->whereIn('status_keberangkatan', ['ditunda', 'dibatalkan']);
+        // Ambil pesanan yang terdampak penundaan/pembatalan jadwal atau pembatalan pesanan yang telah memiliki dana terbayar
+        $queryTerdampak = Pemesanan::with(['user', 'jadwal.paket', 'pembayaran'])
+            ->where(function ($q) {
+                // Terdampak status keberangkatan jadwal ditunda / dibatalkan
+                $q->whereHas('jadwal', function ($sub) {
+                    $sub->whereIn('status_keberangkatan', ['ditunda', 'dibatalkan']);
+                })
+                // Atau pemesanan berstatus dibatalkan / dikonfirmasi
+                ->orWhereIn('status', ['dibatalkan', 'dikonfirmasi']);
             })
-            ->orWhere('status', 'dibatalkan')
-            ->orderBy('id', 'desc')
-            ->get();
+            // Hanya pemesanan yang telah melakukan pembayaran dan diverifikasi
+            ->whereHas('pembayaran', function ($q) {
+                $q->where('status', 'diverifikasi');
+            });
+
+        // Filter jadwal jika dipilih
+        if ($request->filled('jadwal_id')) {
+            $queryTerdampak->where('jadwal_id', $request->jadwal_id);
+        }
+
+        $pemesananTerdampak = $queryTerdampak->orderBy('id', 'desc')->get();
 
         $jadwalTersedia = JadwalKeberangkatan::with('paket')
             ->where('tanggal_berangkat', '>=', now()->toDateString())
             ->whereIn('status_keberangkatan', ['dijadwalkan', 'dikonfirmasi'])
             ->get();
 
-        return view('admin.pengembalian.index', compact('riwayat', 'pemesananTerdampak', 'jadwalTersedia'));
+        $selectedPemesananId = $request->query('pemesanan_id');
+        $selectedPemesanan = $selectedPemesananId ? $pemesananTerdampak->firstWhere('id', (int)$selectedPemesananId) : null;
+
+        return view('admin.pengembalian.index', compact(
+            'riwayat',
+            'pemesananTerdampak',
+            'jadwalTersedia',
+            'selectedPemesananId',
+            'selectedPemesanan'
+        ));
     }
 
     /**

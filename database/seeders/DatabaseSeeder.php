@@ -146,9 +146,13 @@ class DatabaseSeeder extends Seeder
                 ],
                 'fasilitas' => "• Transportasi Bus Pariwisata AC Eksekutif\n• Hotel Bintang 3 (Twin/Triple share)\n• Tiket Penyeberangan Kapal Feri PP\n• Tiket Fastboat Nusa Penida PP\n• Tiket Masuk Seluruh Objek Wisata\n• Makan 8x sesuai itinerary & Air Mineral\n• Tour Leader & Driver Berpengalaman",
                 'fasilitas_tidak_termasuk' => "• Pengeluaran pribadi & laundry\n• Tip Driver dan Tour Leader sukarela\n• Sewa perlengkapan watersport di Tanjung Benoa",
-                'meeting_point' => 'Halaman Parkir Depan Stasiun Solo Balapan',
+                'meeting_point' => json_encode([
+                    'Halaman Parkir Depan Stasiun Solo Balapan',
+                    'Terminal Tirtonadi Solo (Pintu Timur)',
+                    'Bandara Internasional Juanda Surabaya (T1)'
+                ]),
                 'jam_kumpul' => '16:00:00',
-                'foto' => null,
+                'foto' => 'https://images.unsplash.com/photo-1537996194471-e657df975ab4?auto=format&fit=crop&w=1200&q=80',
                 'status_aktif' => true,
             ]
         );
@@ -167,9 +171,13 @@ class DatabaseSeeder extends Seeder
                 ],
                 'fasilitas' => "• Transportasi Elf Long AC PP\n• Jeep Bromo 4x4 (5 spot utama)\n• Tiket Masuk Taman Nasional TNBTS\n• Sarapan & Makan Siang 1x\n• Driver & Tour Leader",
                 'fasilitas_tidak_termasuk' => "• Sewa kuda di Laut Pasir Bromo\n• Jaket & sarung tangan sewa\n• Pengeluaran pribadi",
-                'meeting_point' => 'Terminal Tirtonadi Solo (Pintu Timur)',
+                'meeting_point' => json_encode([
+                    'Terminal Tirtonadi Solo (Pintu Timur)',
+                    'Stasiun Malang Kotabaru',
+                    'SPBU Rest Area Sukapura Probolinggo'
+                ]),
                 'jam_kumpul' => '20:30:00',
-                'foto' => null,
+                'foto' => 'https://images.unsplash.com/photo-1588668214407-6ea9a6d8c272?auto=format&fit=crop&w=1200&q=80',
                 'status_aktif' => true,
             ]
         );
@@ -189,9 +197,12 @@ class DatabaseSeeder extends Seeder
                 ],
                 'fasilitas' => "• Liveaboard Kapal Phinisi AC Kabin Mewah 3H2M\n• Makan 7x prasmanan chef di kapal\n• Alat Snorkeling & Life Jacket lengkap\n• Dokumentasi Drone, DSLR & Underwater Go-Pro\n• Tour Guide berlisensi HPI",
                 'fasilitas_tidak_termasuk' => "• Tiket Pesawat ke/dari Labuan Bajo\n• Tiket Masuk TN Komodo (KPA & Ranger fee)\n• Pengeluaran pribadi & tip crew kapal",
-                'meeting_point' => 'Bandara Internasional Komodo (LBJ)',
+                'meeting_point' => json_encode([
+                    'Bandara Internasional Komodo (LBJ)',
+                    'Pelabuhan Marina Labuan Bajo'
+                ]),
                 'jam_kumpul' => '09:00:00',
-                'foto' => null,
+                'foto' => 'https://images.unsplash.com/photo-1516690561799-46d8f74f9abf?auto=format&fit=crop&w=1200&q=80',
                 'status_aktif' => true,
             ]
         );
@@ -212,9 +223,12 @@ class DatabaseSeeder extends Seeder
                 ],
                 'fasilitas' => "• Resort Waterfront AC di Waisai 4H3M\n• Speedboat private selama tur\n• Tiket Kapal Cepat Sorong-Waisai PP VIP\n• Makan lengkap selama tur 9x\n• Guide lokal berpengalaman\n• Dokumentasi underwater & aerial",
                 'fasilitas_tidak_termasuk' => "• Tiket Pesawat ke Sorong (SOQ)\n• PIN Kartu Masuk Kawasan Konservasi Perairan (KKP) Raja Ampat\n• Tipping guide",
-                'meeting_point' => 'Pelabuhan Rakyat Kota Sorong',
+                'meeting_point' => json_encode([
+                    'Bandara Domine Eduard Osok Sorong (SOQ)',
+                    'Pelabuhan Rakyat Kota Sorong'
+                ]),
                 'jam_kumpul' => '08:00:00',
-                'foto' => null,
+                'foto' => 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1200&q=80',
                 'status_aktif' => true,
             ]
         );

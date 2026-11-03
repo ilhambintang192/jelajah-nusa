@@ -14,35 +14,41 @@ use Illuminate\View\View;
 class PaketWisataController extends Controller
 {
     /**
-     * Daftar Paket Wisata & Jadwal Terpilih (F2-01, F2-02, Frame 107:1960).
+     * Daftar Paket Wisata & Detail Tab (F2, Frame 107:2244, US-05, US-06).
      */
     public function index(Request $request): View
     {
-        $search = $request->query('cari');
         $query = PaketWisata::withCount(['jadwal', 'pemesanan']);
 
-        if (!empty($search)) {
-            $query->where(function ($q) use ($search) {
-                $q->where('nama_paket', 'like', "%{$search}%")
-                  ->orWhere('destinasi', 'like', "%{$search}%");
-            });
+        // Filter Layanan
+        if ($request->filled('layanan') && $request->layanan !== 'semua') {
+            $query->where('jenis_layanan', $request->layanan);
+        }
+
+        // Filter Destinasi
+        if ($request->filled('destinasi')) {
+            $query->where('destinasi', $request->destinasi);
+        }
+
+        // Pencarian Nama Paket
+        if ($request->filled('q')) {
+            $query->where('nama_paket', 'like', '%' . $request->q . '%');
         }
 
         $paketList = $query->orderBy('id', 'desc')->get();
 
-        // Paket terpilih (default: paket pertama)
+        // Ambil paket yang terpilih untuk panel detail kanan
         $selectedId = $request->query('selected', $paketList->first()?->id);
-        $selectedPaket = $selectedId
-            ? PaketWisata::with(['jadwal.kendaraan', 'jadwal.pemesanan'])->find($selectedId)
-            : null;
+        $selectedPaket = $selectedId ? PaketWisata::with(['jadwal.kendaraan', 'jadwal.pemesanan.peserta'])->find($selectedId) : $paketList->first();
 
-        $kendaraanTersedia = Kendaraan::tersedia()->get();
+        // Daftar destinasi unik untuk filter
+        $destinasiList = PaketWisata::distinct()->pluck('destinasi');
 
-        return view('admin.paket.index', compact('paketList', 'selectedPaket', 'kendaraanTersedia', 'search'));
+        return view('admin.paket.index', compact('paketList', 'selectedPaket', 'destinasiList'));
     }
 
     /**
-     * Form Tambah Paket Wisata (Frame 107:3139, 107:1648).
+     * Form Tambah Paket Wisata (Frame 107:2310, US-05).
      */
     public function create(): View
     {
@@ -67,9 +73,12 @@ class PaketWisataController extends Controller
             'itinerary.*.aktivitas' => 'required|string',
             'fasilitas' => 'required|string',
             'fasilitas_tidak_termasuk' => 'nullable|string',
-            'meeting_point' => 'required|string|max:150',
+            'meeting_point' => 'nullable|string',
+            'meeting_points' => 'nullable|array',
+            'meeting_points.*' => 'nullable|string',
             'jam_kumpul' => 'required',
             'foto' => 'nullable|image|mimes:jpeg,jpg,png|max:5120',
+            'foto_url' => 'nullable|string|max:500',
         ], [
             'nama_paket.required' => 'Nama paket wajib diisi.',
             'destinasi.required' => 'Destinasi wajib diisi.',
@@ -77,14 +86,31 @@ class PaketWisataController extends Controller
             'durasi_hari.required' => 'Durasi hari wajib diisi.',
             'itinerary.required' => 'Itinerary per hari wajib diisi minimal 1 hari.',
             'fasilitas.required' => 'Fasilitas termasuk wajib diisi.',
-            'meeting_point.required' => 'Meeting point wajib diisi.',
             'jam_kumpul.required' => 'Jam kumpul wajib diisi.',
             'foto.max' => 'Ukuran file foto melebihi 5 MB.',
         ]);
 
+        // Resolusi meeting point: bisa array multipel meeting point atau input tunggal
+        $points = [];
+        if ($request->has('meeting_points') && is_array($request->meeting_points)) {
+            $points = array_values(array_filter(array_map('trim', $request->meeting_points)));
+        }
+        if (empty($points) && $request->filled('meeting_point')) {
+            $points = [trim($request->meeting_point)];
+        }
+        if (empty($points)) {
+            throw \Illuminate\Validation\ValidationException::withMessages([
+                'meeting_point' => 'Titik kumpul (meeting point) wajib diisi minimal 1 lokasi.',
+            ]);
+        }
+        $meetingPointValue = count($points) > 1 ? json_encode($points) : $points[0];
+
+        // Resolusi foto: upload berkas atau URL gambar
         $fotoPath = null;
         if ($request->hasFile('foto')) {
             $fotoPath = $request->file('foto')->store('paket_foto', 'public');
+        } elseif ($request->filled('foto_url')) {
+            $fotoPath = $request->input('foto_url');
         }
 
         // Format itinerary array index {hari, judul, aktivitas}
@@ -108,7 +134,7 @@ class PaketWisataController extends Controller
             'itinerary' => $formattedItinerary,
             'fasilitas' => $validated['fasilitas'],
             'fasilitas_tidak_termasuk' => $validated['fasilitas_tidak_termasuk'] ?? null,
-            'meeting_point' => $validated['meeting_point'],
+            'meeting_point' => $meetingPointValue,
             'jam_kumpul' => $validated['jam_kumpul'],
             'foto' => $fotoPath,
             'status_aktif' => true,
@@ -122,7 +148,7 @@ class PaketWisataController extends Controller
         );
 
         return redirect()->route('admin.paket.index', ['selected' => $paket->id])
-            ->with('sukses', 'Perubahan berhasil disimpan.');
+            ->with('sukses', 'Paket wisata berhasil ditambahkan.');
     }
 
     /**
@@ -154,16 +180,33 @@ class PaketWisataController extends Controller
             'itinerary.*.aktivitas' => 'required|string',
             'fasilitas' => 'required|string',
             'fasilitas_tidak_termasuk' => 'nullable|string',
-            'meeting_point' => 'required|string|max:150',
+            'meeting_point' => 'nullable|string',
+            'meeting_points' => 'nullable|array',
+            'meeting_points.*' => 'nullable|string',
             'jam_kumpul' => 'required',
             'foto' => 'nullable|image|mimes:jpeg,jpg,png|max:5120',
+            'foto_url' => 'nullable|string|max:500',
         ]);
 
+        // Resolusi meeting point: bisa array multipel meeting point atau input tunggal
+        $points = [];
+        if ($request->has('meeting_points') && is_array($request->meeting_points)) {
+            $points = array_values(array_filter(array_map('trim', $request->meeting_points)));
+        }
+        if (empty($points) && $request->filled('meeting_point')) {
+            $points = [trim($request->meeting_point)];
+        }
+        $meetingPointValue = !empty($points) ? (count($points) > 1 ? json_encode($points) : $points[0]) : $paket->meeting_point;
+
+        // Resolusi foto
+        $fotoPath = $paket->foto;
         if ($request->hasFile('foto')) {
-            if ($paket->foto) {
+            if ($paket->foto && !str_starts_with($paket->foto, 'http')) {
                 Storage::disk('public')->delete($paket->foto);
             }
-            $paket->foto = $request->file('foto')->store('paket_foto', 'public');
+            $fotoPath = $request->file('foto')->store('paket_foto', 'public');
+        } elseif ($request->filled('foto_url')) {
+            $fotoPath = $request->input('foto_url');
         }
 
         $formattedItinerary = [];
@@ -186,8 +229,9 @@ class PaketWisataController extends Controller
             'itinerary' => $formattedItinerary,
             'fasilitas' => $validated['fasilitas'],
             'fasilitas_tidak_termasuk' => $validated['fasilitas_tidak_termasuk'] ?? null,
-            'meeting_point' => $validated['meeting_point'],
+            'meeting_point' => $meetingPointValue,
             'jam_kumpul' => $validated['jam_kumpul'],
+            'foto' => $fotoPath,
         ]);
 
         LogAktivitas::catat(
@@ -208,48 +252,35 @@ class PaketWisataController extends Controller
     {
         $paket = PaketWisata::findOrFail($id);
 
-        // Jika sudah pernah dipakai pemesanan, tolak penghapusan permanen
-        if ($paket->pemesanan()->exists()) {
+        // Periksa apakah ada jadwal dengan pemesanan aktif
+        $totalPemesananAktif = $paket->jadwal()
+            ->whereHas('pemesanan', function ($q) {
+                $q->whereIn('status', ['menunggu', 'dikonfirmasi']);
+            })
+            ->count();
+
+        if ($totalPemesananAktif > 0) {
             return back()->with('error', 'Data ini sudah dipakai pemesanan dan tidak bisa dihapus. Nonaktifkan saja.');
         }
 
         // Hapus foto jika ada
-        if ($paket->foto) {
+        if ($paket->foto && !str_starts_with($paket->foto, 'http')) {
             Storage::disk('public')->delete($paket->foto);
         }
 
-        $nama = $paket->nama_paket;
+        // Hapus jadwal kosong yang terkait
         $paket->jadwal()->delete();
+        $namaPaket = $paket->nama_paket;
         $paket->delete();
 
         LogAktivitas::catat(
             aksi: 'hapus_paket',
             subjekTipe: 'PaketWisata',
             subjekId: $id,
-            keterangan: "Paket wisata '{$nama}' dihapus."
+            keterangan: "Paket wisata '{$namaPaket}' dihapus."
         );
 
-        return redirect()->route('admin.paket.index')->with('sukses', 'Perubahan berhasil disimpan.');
-    }
-
-    /**
-     * Aktifkan / Nonaktifkan paket wisata.
-     */
-    public function toggleAktif(int $id): RedirectResponse
-    {
-        $paket = PaketWisata::findOrFail($id);
-        $paket->status_aktif = !$paket->status_aktif;
-        $paket->save();
-
-        $statusTeks = $paket->status_aktif ? 'diaktifkan' : 'dinonaktifkan';
-
-        LogAktivitas::catat(
-            aksi: 'toggle_paket',
-            subjekTipe: 'PaketWisata',
-            subjekId: $paket->id,
-            keterangan: "Paket wisata '{$paket->nama_paket}' {$statusTeks}."
-        );
-
-        return back()->with('sukses', "Paket wisata berhasil {$statusTeks}.");
+        return redirect()->route('admin.paket.index')
+            ->with('sukses', "Paket wisata '{$namaPaket}' berhasil dihapus.");
     }
 }

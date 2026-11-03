@@ -703,4 +703,93 @@ class JelajahNusaTest extends TestCase
         $response->assertSee('Hasil Pencarian Global');
         $response->assertSee('Bromo Midnight Sunrise 2H1M');
     }
+
+    /**
+     * T-24: Admin dapat membuat paket wisata dengan multipel meeting point dan foto.
+     */
+    public function test_T24_package_with_multiple_meeting_points_and_photo(): void
+    {
+        $this->actingAs($this->admin);
+
+        $payload = [
+            'nama_paket' => 'Eksotisme Banyuwangi Ijen 3H2M',
+            'destinasi' => 'Banyuwangi',
+            'jenis_layanan' => 'open_trip',
+            'harga' => 1800000,
+            'durasi_hari' => 3,
+            'deskripsi' => 'Eksplorasi Kawah Ijen Blue Fire dan Taman Nasional Baluran.',
+            'itinerary' => [
+                ['judul' => 'Penjemputan', 'aktivitas' => 'Kumpul di meeting point Banyuwangi'],
+                ['judul' => 'Kawah Ijen', 'aktivitas' => 'Trekking blue fire'],
+            ],
+            'fasilitas' => 'Transportasi AC, Hotel, Tiket Masuk',
+            'meeting_points' => [
+                'Stasiun Banyuwangi Kota',
+                'Bandara Blimbingsari',
+                'Pelabuhan Ketapang',
+            ],
+            'jam_kumpul' => '19:00',
+            'foto_url' => 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e',
+        ];
+
+        $response = $this->post('/admin/paket', $payload);
+        $response->assertSessionHas('sukses');
+
+        $paket = PaketWisata::where('nama_paket', 'Eksotisme Banyuwangi Ijen 3H2M')->first();
+        $this->assertNotNull($paket);
+        $this->assertCount(3, $paket->meeting_points);
+        $this->assertEquals('Stasiun Banyuwangi Kota', $paket->primary_meeting_point);
+        $this->assertEquals('https://images.unsplash.com/photo-1507525428034-b723cf961d3e', $paket->foto_url);
+
+        // Halaman katalog wisatawan menampilkan paket dan fotonya
+        $catalogResponse = $this->get('/paket');
+        $catalogResponse->assertStatus(200);
+        $catalogResponse->assertSee('Eksotisme Banyuwangi Ijen 3H2M');
+        $catalogResponse->assertSee('3 Titik Kumpul');
+    }
+
+    /**
+     * T-25: Halaman refund admin menampilkan dan dapat memilih pemesanan terdampak.
+     */
+    public function test_T25_refund_page_allows_selecting_impacted_booking(): void
+    {
+        $this->actingAs($this->admin);
+
+        // Buat pemesanan yang terdampak jadwal ditunda
+        $jadwalDitunda = JadwalKeberangkatan::create([
+            'paket_wisata_id' => $this->paket->id,
+            'tanggal_berangkat' => now()->addDays(5)->toDateString(),
+            'kuota' => 20,
+            'sisa_kuota' => 18,
+            'min_peserta' => 5,
+            'status_keberangkatan' => 'ditunda',
+        ]);
+
+        $pemesanan = Pemesanan::create([
+            'kode_pemesanan' => 'PSN-REFUND-SELECT',
+            'user_id' => $this->wisatawanA->id,
+            'jadwal_id' => $jadwalDitunda->id,
+            'jumlah_peserta' => 2,
+            'total_biaya' => 2500000,
+            'status' => 'dikonfirmasi',
+        ]);
+
+        Pembayaran::create([
+            'pemesanan_id' => $pemesanan->id,
+            'nominal' => 2500000,
+            'tanggal_bayar' => now()->toDateString(),
+            'bukti_transfer' => 'sample.jpg',
+            'status' => 'diverifikasi',
+        ]);
+
+        $response = $this->get('/admin/pengembalian');
+        $response->assertStatus(200);
+        $response->assertSee('PSN-REFUND-SELECT');
+        $response->assertSee('Trip Ditunda');
+
+        // Buka dengan query parameter ?pemesanan_id=
+        $selectResponse = $this->get('/admin/pengembalian?pemesanan_id=' . $pemesanan->id);
+        $selectResponse->assertStatus(200);
+        $selectResponse->assertSee('PSN-REFUND-SELECT');
+    }
 }

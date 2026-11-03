@@ -20,14 +20,7 @@
             
             <!-- Hero Photo -->
             <div class="h-80 sm:h-96 rounded-3xl overflow-hidden bg-slate-900 relative shadow-lg">
-                @if($paket->foto)
-                    <img src="{{ asset('storage/' . $paket->foto) }}" alt="{{ $paket->nama_paket }}" class="w-full h-full object-cover">
-                @else
-                    <div class="w-full h-full bg-gradient-to-tr from-sky-600 via-indigo-700 to-slate-900 flex flex-col items-center justify-center p-8 text-center text-white">
-                        <svg class="w-16 h-16 text-sky-200 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-                        <h2 class="text-2xl font-extrabold uppercase tracking-widest">{{ $paket->destinasi }}</h2>
-                    </div>
-                @endif
+                <img src="{{ $paket->foto_url }}" alt="{{ $paket->nama_paket }}" class="w-full h-full object-cover">
 
                 <div class="absolute top-4 left-4 flex gap-2">
                     <span class="px-3.5 py-1.5 rounded-full text-xs font-extrabold uppercase tracking-wider backdrop-blur-md text-white {{ $paket->jenis_layanan === 'open_trip' ? 'bg-indigo-600/90' : 'bg-emerald-600/90' }}">
@@ -44,16 +37,29 @@
                 <h3 class="text-lg font-extrabold text-slate-900">Tentang Paket Wisata Ini</h3>
                 <p class="text-sm text-slate-600 leading-relaxed whitespace-pre-line">{{ $paket->deskripsi ?: 'Nikmati perjalanan mengagumkan dengan paket wisata eksklusif yang dirancang untuk kenyamanan dan pengalaman liburan terbaik Anda.' }}</p>
 
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-4 border-t border-slate-100 text-xs">
-                    <div class="p-4 bg-slate-50 rounded-2xl">
-                        <span class="text-slate-400 block font-medium mb-1">Titik Kumpul (Meeting Point):</span>
-                        <strong class="text-slate-800 text-sm block">{{ $paket->meeting_point }}</strong>
-                        <span class="text-sky-600 font-bold block mt-1">Pukul {{ substr($paket->jam_kumpul, 0, 5) }} WIB</span>
+                <div class="pt-4 border-t border-slate-100 space-y-3">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center gap-2">
+                            <svg class="w-5 h-5 text-rose-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                            <h4 class="text-sm font-extrabold text-slate-900">Pilihan Titik Kumpul (Meeting Point)</h4>
+                        </div>
+                        <span class="text-xs font-bold text-sky-600 bg-sky-50 px-2.5 py-1 rounded-lg">
+                            Pukul {{ substr($paket->jam_kumpul, 0, 5) }} WIB
+                        </span>
                     </div>
-                    <div class="p-4 bg-slate-50 rounded-2xl">
-                        <span class="text-slate-400 block font-medium mb-1">Durasi Tour:</span>
-                        <strong class="text-slate-800 text-sm block">{{ $paket->durasi_hari }} Hari {{ max(0, $paket->durasi_hari - 1) }} Malam</strong>
-                        <span class="text-slate-500 block mt-1">Destinasi: {{ $paket->destinasi }}</span>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                        @foreach($paket->meeting_points as $index => $mp)
+                            <div class="flex items-start gap-2.5 p-3 bg-slate-50 border border-slate-200/80 rounded-2xl">
+                                <span class="w-5 h-5 rounded-full bg-sky-600 text-white flex items-center justify-center text-[10px] font-extrabold shrink-0 mt-0.5">
+                                    {{ $index + 1 }}
+                                </span>
+                                <div class="text-xs">
+                                    <strong class="text-slate-800 block leading-tight">{{ $mp }}</strong>
+                                    <span class="text-[10px] text-slate-400">Titik Kumpul Penjemputan Resmi</span>
+                                </div>
+                            </div>
+                        @endforeach
                     </div>
                 </div>
             </div>

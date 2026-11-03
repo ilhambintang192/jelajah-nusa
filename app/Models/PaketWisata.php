@@ -73,4 +73,72 @@ class PaketWisata extends Model
             ->orderBy('tanggal_berangkat', 'asc')
             ->first();
     }
+
+    /**
+     * URL Foto Paket Wisata (Upload Lokal atau Kurasi Resolusi Tinggi).
+     */
+    public function getFotoUrlAttribute(): string
+    {
+        if (!empty($this->foto)) {
+            if (str_starts_with($this->foto, 'http://') || str_starts_with($this->foto, 'https://')) {
+                return $this->foto;
+            }
+            return asset('storage/' . $this->foto);
+        }
+
+        // Gambar kurasi resolusi tinggi sesuai destinasi
+        $text = strtolower(($this->destinasi ?? '') . ' ' . ($this->nama_paket ?? ''));
+        if (str_contains($text, 'bromo') || str_contains($text, 'semeru')) {
+            return 'https://images.unsplash.com/photo-1588668214407-6ea9a6d8c272?auto=format&fit=crop&w=1200&q=80';
+        } elseif (str_contains($text, 'bali') || str_contains($text, 'penida')) {
+            return 'https://images.unsplash.com/photo-1537996194471-e657df975ab4?auto=format&fit=crop&w=1200&q=80';
+        } elseif (str_contains($text, 'bajo') || str_contains($text, 'komodo')) {
+            return 'https://images.unsplash.com/photo-1516690561799-46d8f74f9abf?auto=format&fit=crop&w=1200&q=80';
+        } elseif (str_contains($text, 'raja ampat') || str_contains($text, 'papua')) {
+            return 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1200&q=80';
+        } elseif (str_contains($text, 'jogja') || str_contains($text, 'borobudur')) {
+            return 'https://images.unsplash.com/photo-1596402184320-417e7178b2cd?auto=format&fit=crop&w=1200&q=80';
+        }
+
+        return 'https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?auto=format&fit=crop&w=1200&q=80';
+    }
+
+    /**
+     * Daftar Titik Kumpul / Meeting Points (Dukungan Multipel Meeting Point).
+     *
+     * @return array<int, string>
+     */
+    public function getMeetingPointsAttribute(): array
+    {
+        if (empty($this->meeting_point)) {
+            return [];
+        }
+
+        // Jika tersimpan sebagai format JSON array
+        $decoded = json_decode($this->meeting_point, true);
+        if (is_array($decoded)) {
+            return array_values(array_filter(array_map('trim', $decoded)));
+        }
+
+        // Jika dipisahkan oleh baris baru (\n)
+        if (str_contains($this->meeting_point, "\n")) {
+            return array_values(array_filter(array_map('trim', explode("\n", $this->meeting_point))));
+        }
+
+        // Jika dipisahkan oleh karakter pipe (|)
+        if (str_contains($this->meeting_point, '|')) {
+            return array_values(array_filter(array_map('trim', explode('|', $this->meeting_point))));
+        }
+
+        return [trim($this->meeting_point)];
+    }
+
+    /**
+     * Titik Kumpul Utama (Titik Pertama).
+     */
+    public function getPrimaryMeetingPointAttribute(): string
+    {
+        $points = $this->meeting_points;
+        return $points[0] ?? ($this->meeting_point ?? 'Dikonfirmasi Tour Leader');
+    }
 }
