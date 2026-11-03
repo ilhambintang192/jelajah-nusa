@@ -794,7 +794,7 @@ class JelajahNusaTest extends TestCase
     }
 
     /**
-     * T-26: Halaman kelola paket dan jadwal admin dapat dibuka normal tanpa error variable undefined.
+     * T-26: Halaman kelola paket, tambah paket, ubah paket, dan jadwal admin dapat dibuka normal tanpa error.
      */
     public function test_t26_admin_paket_and_jadwal_page_renders_cleanly(): void
     {
@@ -809,5 +809,15 @@ class JelajahNusaTest extends TestCase
         $searchResponse = $this->get('/admin/paket?cari=' . urlencode($this->paket->nama_paket));
         $searchResponse->assertStatus(200);
         $searchResponse->assertSee($this->paket->nama_paket);
+
+        // Test form tambah paket
+        $createResponse = $this->get('/admin/paket/tambah');
+        $createResponse->assertStatus(200);
+        $createResponse->assertSee('Tambah Paket Wisata Baru');
+
+        // Test form ubah paket
+        $editResponse = $this->get("/admin/paket/{$this->paket->id}/ubah");
+        $editResponse->assertStatus(200);
+        $editResponse->assertSee('Ubah Paket Wisata');
     }
 }

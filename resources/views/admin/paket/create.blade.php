@@ -192,7 +192,7 @@
                 </div>
                 <div x-show="urlInput" class="pt-2">
                     <p class="text-xs font-bold text-slate-700 mb-1">Pratinjau Gambar:</p>
-                    <img :src="urlInput" alt="Preview URL" @error="$el.style.display='none'" @load="$el.style.display='block'" class="max-h-56 rounded-xl object-cover shadow-md border border-slate-200">
+                    <img :src="urlInput" alt="Preview URL" x-on:error="$el.style.display='none'" x-on:load="$el.style.display='block'" class="max-h-56 rounded-xl object-cover shadow-md border border-slate-200">
                 </div>
             </div>
         </div>
