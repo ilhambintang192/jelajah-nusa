@@ -30,9 +30,13 @@ class PaketWisataController extends Controller
             $query->where('destinasi', $request->destinasi);
         }
 
-        // Pencarian Nama Paket
-        if ($request->filled('q')) {
-            $query->where('nama_paket', 'like', '%' . $request->q . '%');
+        // Pencarian Nama Paket atau Destinasi
+        $search = $request->query('cari', $request->query('q', ''));
+        if (!empty($search)) {
+            $query->where(function ($q) use ($search) {
+                $q->where('nama_paket', 'like', '%' . $search . '%')
+                  ->orWhere('destinasi', 'like', '%' . $search . '%');
+            });
         }
 
         $paketList = $query->orderBy('id', 'desc')->get();
@@ -43,8 +47,9 @@ class PaketWisataController extends Controller
 
         // Daftar destinasi unik untuk filter
         $destinasiList = PaketWisata::distinct()->pluck('destinasi');
+        $kendaraanTersedia = Kendaraan::tersedia()->get();
 
-        return view('admin.paket.index', compact('paketList', 'selectedPaket', 'destinasiList'));
+        return view('admin.paket.index', compact('paketList', 'selectedPaket', 'destinasiList', 'search', 'kendaraanTersedia'));
     }
 
     /**

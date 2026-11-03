@@ -792,4 +792,22 @@ class JelajahNusaTest extends TestCase
         $selectResponse->assertStatus(200);
         $selectResponse->assertSee('PSN-REFUND-SELECT');
     }
+
+    /**
+     * T-26: Halaman kelola paket dan jadwal admin dapat dibuka normal tanpa error variable undefined.
+     */
+    public function test_t26_admin_paket_and_jadwal_page_renders_cleanly(): void
+    {
+        $this->actingAs($this->admin);
+
+        $response = $this->get('/admin/paket');
+        $response->assertStatus(200);
+        $response->assertSee('Daftar Paket');
+        $response->assertSee('Jadwal Keberangkatan');
+
+        // Test filter search
+        $searchResponse = $this->get('/admin/paket?cari=' . urlencode($this->paket->nama_paket));
+        $searchResponse->assertStatus(200);
+        $searchResponse->assertSee($this->paket->nama_paket);
+    }
 }

@@ -25,7 +25,7 @@
             <form action="{{ route('admin.paket.index') }}" method="GET" class="relative w-full sm:w-72">
                 <input type="text" 
                        name="cari" 
-                       value="{{ $search }}" 
+                       value="{{ $search ?? request('cari', '') }}" 
                        placeholder="Cari nama paket atau destinasi..." 
                        class="w-full pl-9 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-teal-500/20 text-slate-700">
                 <svg class="w-4 h-4 text-slate-400 absolute left-3 top-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
@@ -41,12 +41,12 @@
                     
                     <!-- Left: Thumbnail & Info -->
                     <div class="flex items-center gap-4 flex-1">
-                        <a href="{{ route('admin.paket.index', ['selected' => $p->id, 'cari' => $search]) }}" class="shrink-0">
+                        <a href="{{ route('admin.paket.index', ['selected' => $p->id, 'cari' => $search ?? request('cari', '')]) }}" class="shrink-0">
                             <img src="{{ $p->foto_url }}" alt="{{ $p->nama_paket }}" class="w-24 h-16 rounded-xl object-cover border border-slate-200 shadow-xs">
                         </a>
 
                         <div class="space-y-1">
-                            <a href="{{ route('admin.paket.index', ['selected' => $p->id, 'cari' => $search]) }}" class="group">
+                            <a href="{{ route('admin.paket.index', ['selected' => $p->id, 'cari' => $search ?? request('cari', '')]) }}" class="group">
                                 <h3 class="text-sm font-extrabold text-slate-900 group-hover:text-teal-700 transition leading-snug">
                                     {{ $p->nama_paket }}
                                 </h3>
@@ -74,7 +74,7 @@
                         </div>
 
                         <div class="flex items-center gap-3 text-xs font-semibold">
-                            <a href="{{ route('admin.paket.index', ['selected' => $p->id, 'cari' => $search]) }}" class="text-slate-600 hover:text-teal-700">
+                            <a href="{{ route('admin.paket.index', ['selected' => $p->id, 'cari' => $search ?? request('cari', '')]) }}" class="text-slate-600 hover:text-teal-700">
                                 Jadwal ({{ $p->jadwal_count }})
                             </a>
                             <span class="text-slate-200">|</span>
@@ -139,7 +139,7 @@
                             <label class="block font-bold text-slate-700 mb-1">Pilih Armada Kendaraan</label>
                             <select name="kendaraan_id" class="w-full px-3 py-2 bg-white border border-slate-200 rounded-xl">
                                 <option value="">— Belum Ditetapkan —</option>
-                                @foreach($kendaraanTersedia as $k)
+                                @foreach(($kendaraanTersedia ?? \App\Models\Kendaraan::tersedia()->get()) as $k)
                                     <option value="{{ $k->id }}">{{ $k->jenis_kendaraan }} ({{ $k->kapasitas }} kursi)</option>
                                 @endforeach
                             </select>
