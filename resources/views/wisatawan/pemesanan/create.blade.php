@@ -5,204 +5,341 @@
     $maxSeats = $jadwal ? $jadwal->sisa_kuota : ($customTrip ? $customTrip->jumlah_peserta : 1);
     $unitPrice = $jadwal ? (float)$jadwal->paket->harga : 0;
     $customPrice = $customTrip ? (float)$customTrip->biaya_penawaran : 0;
+    $paket = $jadwal ? $jadwal->paket : null;
 @endphp
 
-<div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6" 
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8" 
      x-data="bookingFormManager({{ $maxSeats }}, {{ $unitPrice }}, {{ $customPrice }}, {{ $customTrip ? 'true' : 'false' }})">
     
-    <div>
-        <h1 class="text-2xl font-extrabold text-slate-900 tracking-tight">Form Pemesanan &amp; Data Peserta</h1>
-        <p class="text-xs sm:text-sm text-slate-500 mt-1">Lengkapi data seluruh peserta dan unggah foto identitas (KTP/Paspor) untuk penerbitan tiket</p>
-    </div>
-
-    <!-- Ringkasan Paket Terpilih -->
-    <div class="bg-white p-6 rounded-3xl border border-slate-200/80 shadow-xs flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+    <!-- Title & 4-Step Progress Header matching Figma -->
+    <div class="space-y-4">
         <div>
-            @if($jadwal)
-                <span class="px-2.5 py-0.5 rounded-md text-[10px] font-bold uppercase bg-sky-50 text-sky-700">Jadwal Open Trip / Reguler</span>
-                <h3 class="text-lg font-extrabold text-slate-900 mt-1">{{ $jadwal->paket->nama_paket }}</h3>
-                <p class="text-xs text-slate-500 mt-0.5">
-                    Tanggal: <strong>{{ $jadwal->tanggal_berangkat->translatedFormat('l, d F Y') }}</strong> &bull; Sisa Kuota: <strong class="text-emerald-600">{{ $jadwal->sisa_kuota }} Kursi</strong>
-                </p>
-            @elseif($customTrip)
-                <span class="px-2.5 py-0.5 rounded-md text-[10px] font-bold uppercase bg-indigo-50 text-indigo-700">Custom Trip Disetujui</span>
-                <h3 class="text-lg font-extrabold text-slate-900 mt-1">Custom Trip: {{ $customTrip->tujuan }}</h3>
-                <p class="text-xs text-slate-500 mt-0.5">
-                    Tanggal: <strong>{{ $customTrip->jadwal_penawaran ? $customTrip->jadwal_penawaran->format('d/m/Y') : $customTrip->tanggal_diinginkan->format('d/m/Y') }}</strong> &bull; {{ $customTrip->jumlah_peserta }} Peserta
-                </p>
-            @endif
+            <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">Pemesanan Paket</h1>
+            <p class="text-xs sm:text-sm text-slate-500 mt-1">Tentukan jadwal dan lengkapi data peserta untuk perjalanan Anda.</p>
         </div>
-        <div class="text-right">
-            <span class="text-xs text-slate-400 block font-medium">Tarif Satuan</span>
-            <span class="text-xl font-extrabold text-sky-600">
-                {{ $jadwal ? $jadwal->paket->harga_format : 'Rp ' . number_format($customTrip->biaya_penawaran, 0, ',', '.') }}
-            </span>
+
+        <!-- 4 Step Stepper -->
+        <div class="flex items-center gap-2 sm:gap-4 text-xs font-semibold overflow-x-auto pb-2">
+            <!-- Step 1 -->
+            <div class="flex items-center gap-2">
+                <span class="w-6 h-6 rounded-full bg-teal-700 text-white flex items-center justify-center text-xs font-bold shrink-0">1</span>
+                <span class="text-slate-900 font-bold whitespace-nowrap">Jadwal &amp; Jumlah</span>
+            </div>
+            <div class="w-8 sm:w-12 h-0.5 bg-teal-700"></div>
+
+            <!-- Step 2 -->
+            <div class="flex items-center gap-2">
+                <span class="w-6 h-6 rounded-full bg-teal-700 text-white flex items-center justify-center text-xs font-bold shrink-0">2</span>
+                <span class="text-slate-900 font-bold whitespace-nowrap">Data Peserta</span>
+            </div>
+            <div class="w-8 sm:w-12 h-0.5 bg-slate-200"></div>
+
+            <!-- Step 3 -->
+            <div class="flex items-center gap-2">
+                <span class="w-6 h-6 rounded-full bg-slate-200 text-slate-600 flex items-center justify-center text-xs font-bold shrink-0">3</span>
+                <span class="text-slate-400 whitespace-nowrap">Ringkasan</span>
+            </div>
+            <div class="w-8 sm:w-12 h-0.5 bg-slate-200"></div>
+
+            <!-- Step 4 -->
+            <div class="flex items-center gap-2">
+                <span class="w-6 h-6 rounded-full bg-slate-200 text-slate-600 flex items-center justify-center text-xs font-bold shrink-0">4</span>
+                <span class="text-slate-400 whitespace-nowrap">Konfirmasi</span>
+            </div>
         </div>
     </div>
 
-    <form action="{{ route('pemesanan.store') }}" method="POST" enctype="multipart/form-data" class="space-y-6">
-        @csrf
-        @if($jadwal)
-            <input type="hidden" name="jadwal_id" value="{{ $jadwal->id }}">
-        @elseif($customTrip)
-            <input type="hidden" name="custom_trip_id" value="{{ $customTrip->id }}">
-        @endif
+    <!-- 2 Column Layout: Left Form, Right Summary -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+        
+        <!-- Left: Booking Form (7 Cols) -->
+        <div class="lg:col-span-7 space-y-6">
+            
+            <form id="booking-form" action="{{ route('pemesanan.store') }}" method="POST" enctype="multipart/form-data" class="space-y-6">
+                @csrf
+                @if($jadwal)
+                    <input type="hidden" name="jadwal_id" value="{{ $jadwal->id }}">
+                @elseif($customTrip)
+                    <input type="hidden" name="custom_trip_id" value="{{ $customTrip->id }}">
+                @endif
 
-        <!-- Pemilihan Jumlah Peserta -->
-        @if($jadwal)
-            <div class="bg-white p-6 rounded-3xl border border-slate-200/80 shadow-xs space-y-3">
-                <div class="flex items-center justify-between">
+                <!-- Card 1: Jadwal Keberangkatan Terpilih -->
+                <div class="bg-white p-6 rounded-3xl border border-slate-200/90 shadow-xs space-y-3">
+                    <h3 class="text-sm font-extrabold text-slate-900">Jadwal Keberangkatan</h3>
+                    <p class="text-xs text-slate-500">
+                        {{ $paket ? $paket->nama_paket : ($customTrip ? 'Custom Trip: ' . $customTrip->tujuan : '') }}
+                    </p>
+
+                    @if($jadwal)
+                        <div class="p-4 rounded-2xl border-2 border-teal-700 bg-teal-50/20 flex items-center justify-between">
+                            <div class="flex items-center gap-3">
+                                <div class="w-4 h-4 rounded-full border-4 border-teal-700 bg-white"></div>
+                                <div>
+                                    <span class="text-sm font-extrabold text-slate-900 block">
+                                        {{ $jadwal->tanggal_berangkat->translatedFormat('d F Y') }}
+                                    </span>
+                                    <span class="text-xs text-slate-500">
+                                        Pukul {{ substr($paket->jam_kumpul ?? '05:00', 0, 5) }} WIB &bull; {{ $paket->meeting_points[0] ?? 'Meeting Point Resmi' }}
+                                    </span>
+                                </div>
+                            </div>
+                            <span class="px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-50 text-emerald-700">
+                                Sisa {{ $jadwal->sisa_kuota }} kursi
+                            </span>
+                        </div>
+                    @elseif($customTrip)
+                        <div class="p-4 rounded-2xl border-2 border-teal-700 bg-teal-50/20 flex items-center justify-between">
+                            <div>
+                                <span class="text-sm font-extrabold text-slate-900 block">
+                                    {{ $customTrip->jadwal_penawaran ? $customTrip->jadwal_penawaran->translatedFormat('d F Y') : $customTrip->tanggal_diinginkan->translatedFormat('d F Y') }}
+                                </span>
+                                <span class="text-xs text-slate-500">
+                                    Rombongan Custom Trip &bull; {{ $customTrip->jumlah_peserta }} Peserta
+                                </span>
+                            </div>
+                            <span class="px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-50 text-emerald-700">
+                                Disetujui
+                            </span>
+                        </div>
+                    @endif
+                </div>
+
+                <!-- Card 2: Pemilihan Jumlah Peserta -->
+                @if($jadwal)
+                    <div class="bg-white p-6 rounded-3xl border border-slate-200/90 shadow-xs flex items-center justify-between gap-4">
+                        <div>
+                            <h3 class="text-sm font-extrabold text-slate-900">Jumlah Peserta</h3>
+                            <p class="text-xs text-slate-500 mt-0.5">Harga per orang {{ $jadwal->paket->harga_format }}</p>
+                            <p class="text-[11px] text-slate-400">Termasuk peserta dewasa dan anak yang menggunakan kursi.</p>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <button type="button" @click="kurangiPeserta()" class="w-10 h-10 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 font-extrabold text-lg flex items-center justify-center transition">
+                                -
+                            </button>
+                            <span class="text-lg font-extrabold text-slate-900 min-w-[28px] text-center" x-text="pesertaList.length"></span>
+                            <button type="button" @click="tambahPeserta()" class="w-10 h-10 rounded-xl bg-teal-700 hover:bg-teal-800 text-white font-extrabold text-lg flex items-center justify-center transition">
+                                +
+                            </button>
+                        </div>
+                    </div>
+                @endif
+
+                <!-- Card 3: Status Open Trip Progress -->
+                @if($jadwal && $jadwal->paket->jenis_layanan === 'open_trip')
+                    @php
+                        $aktif = $jadwal->peserta_aktif;
+                        $min = $jadwal->min_peserta;
+                        $max = $jadwal->kuota;
+                        $layak = $aktif >= $min;
+                        $pct = min(100, round(($aktif / max(1, $max)) * 100));
+                    @endphp
+                    <div class="bg-white p-6 rounded-3xl border border-slate-200/90 shadow-xs space-y-3">
+                        <div class="flex items-center justify-between">
+                            <h3 class="text-sm font-extrabold text-slate-900">Status Open Trip</h3>
+                            <span class="px-2.5 py-0.5 rounded-full text-xs font-bold {{ $layak ? 'bg-emerald-50 text-emerald-700' : 'bg-amber-50 text-amber-700' }}">
+                                {{ $layak ? 'Layak dijalankan' : 'Menunggu kuota' }}
+                            </span>
+                        </div>
+                        <div class="w-full bg-slate-100 rounded-full h-2 overflow-hidden">
+                            <div class="bg-teal-600 h-2 rounded-full transition-all" style="width: {{ $pct }}%"></div>
+                        </div>
+                        <p class="text-xs text-slate-500">
+                            {{ $aktif }}/{{ $max }} peserta terdaftar · minimal {{ $min }}. 
+                            {{ $layak ? 'Batas minimal sudah terpenuhi.' : 'Masih menunggu peserta lain.' }}
+                        </p>
+                    </div>
+                @endif
+
+                <!-- Formulir Data Peserta & Upload KTP matching Figma -->
+                <div class="space-y-4">
+                    <div class="flex items-center justify-between">
+                        <h3 class="text-base font-extrabold text-slate-900">Data dan Dokumen Identitas Peserta</h3>
+                        <span class="text-xs text-slate-400">Diperlukan untuk manifes &amp; asuransi</span>
+                    </div>
+
+                    <template x-for="(peserta, index) in pesertaList" :key="index">
+                        <div class="bg-white p-6 rounded-3xl border border-slate-200/90 shadow-xs space-y-4">
+                            <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+                                <div class="flex items-center gap-2">
+                                    <span class="w-6 h-6 rounded-full bg-teal-700 text-white flex items-center justify-center text-xs font-bold" x-text="index + 1"></span>
+                                    <h4 class="text-sm font-extrabold text-slate-900" x-text="'Peserta ' + (index + 1) + (index === 0 ? ' (Pemesan Utama)' : '')"></h4>
+                                </div>
+                                <button type="button" @click="hapusPeserta(index)" x-show="pesertaList.length > 1 && !isCustom" class="text-rose-500 hover:text-rose-700 text-xs font-bold">
+                                    Hapus
+                                </button>
+                            </div>
+
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-xs font-bold text-slate-700 mb-1">Nama Lengkap (Sesuai KTP/Paspor)</label>
+                                    <input type="text" :name="'peserta[' + index + '][nama_lengkap]'" x-model="peserta.nama_lengkap" required placeholder="Contoh: Rina Wulandari" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs sm:text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-teal-500/20">
+                                </div>
+
+                                <div>
+                                    <label class="block text-xs font-bold text-slate-700 mb-1">Jenis &amp; Nomor Identitas</label>
+                                    <div class="flex gap-2">
+                                        <select :name="'peserta[' + index + '][jenis_identitas]'" x-model="peserta.jenis_identitas" required class="w-24 px-2 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-800">
+                                            <option value="ktp">KTP</option>
+                                            <option value="paspor">Paspor</option>
+                                        </select>
+                                        <input type="text" :name="'peserta[' + index + '][no_identitas]'" x-model="peserta.no_identitas" required placeholder="16 digit NIK / Paspor" class="flex-1 px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs sm:text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-teal-500/20">
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <label class="block text-xs font-bold text-slate-700 mb-1">Nomor WhatsApp / HP</label>
+                                    <input type="text" :name="'peserta[' + index + '][no_hp]'" x-model="peserta.no_hp" placeholder="08xxxxxxxxxx" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs sm:text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-teal-500/20">
+                                </div>
+
+                                <div>
+                                    <label class="block text-xs font-bold text-slate-700 mb-1">Email Peserta (Opsional)</label>
+                                    <input type="email" placeholder="nama@email.com" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs sm:text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-teal-500/20">
+                                </div>
+                            </div>
+
+                            <!-- Upload Foto KTP/Paspor Box matching Figma -->
+                            <div>
+                                <label class="block text-xs font-bold text-slate-700 mb-1.5">Unggah Foto KTP / Paspor</label>
+                                <div class="border-2 border-dashed border-teal-500/60 bg-teal-50/30 rounded-2xl p-6 text-center hover:bg-teal-50/60 transition cursor-pointer relative">
+                                    <input type="file" 
+                                           :name="'peserta[' + index + '][file_identitas]'" 
+                                           required 
+                                           accept=".jpg,.jpeg,.png"
+                                           class="absolute inset-0 w-full h-full opacity-0 cursor-pointer">
+                                    <div class="space-y-1.5 pointer-events-none">
+                                        <div class="w-10 h-10 rounded-full bg-teal-100 text-teal-800 flex items-center justify-center mx-auto">
+                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg>
+                                        </div>
+                                        <p class="text-xs font-bold text-teal-900">
+                                            Unggah foto KTP / Paspor — tarik &amp; lepas atau klik
+                                        </p>
+                                        <p class="text-[11px] text-slate-400">
+                                            JPG / PNG &bull; maks. 5 MB &bull; disimpan privat &amp; terenkripsi
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </template>
+                </div>
+            </form>
+
+        </div>
+
+        <!-- Right: Sticky Ringkasan Pesanan matching Figma (5 Cols) -->
+        <div class="lg:col-span-5 space-y-6 lg:sticky lg:top-24">
+            
+            <div class="bg-white p-6 sm:p-7 rounded-3xl border border-slate-200/90 shadow-lg space-y-5">
+                <h3 class="text-base font-extrabold text-slate-900">Ringkasan Pesanan</h3>
+
+                <!-- Trip Banner -->
+                @if($paket)
+                    <div class="h-36 rounded-2xl overflow-hidden relative bg-slate-900">
+                        <img src="{{ $paket->foto_url }}" alt="{{ $paket->nama_paket }}" class="w-full h-full object-cover opacity-90">
+                        <span class="absolute top-3 left-3 px-2.5 py-1 rounded-md text-[10px] font-bold bg-white/90 text-slate-800 shadow-xs">
+                            Paket Pilihan
+                        </span>
+                    </div>
+
                     <div>
-                        <h3 class="text-sm font-extrabold text-slate-900">Berapa Banyak Peserta yang Ingin Didaftarkan?</h3>
-                        <p class="text-xs text-slate-400">Pilih jumlah kursi (maksimal sisa kuota yang tersedia: {{ $jadwal->sisa_kuota }} kursi)</p>
+                        <h4 class="text-base font-extrabold text-slate-900 leading-tight">{{ $paket->nama_paket }}</h4>
+                        <p class="text-xs text-slate-500 mt-1">
+                            Berangkat {{ $jadwal ? $jadwal->tanggal_berangkat->translatedFormat('d M Y') : '—' }} &bull; Pukul {{ substr($paket->jam_kumpul ?? '05:00', 0, 5) }} WIB
+                        </p>
+                        <span class="inline-block mt-2 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-sky-50 text-sky-700">
+                            {{ $paket->jenis_layanan === 'open_trip' ? 'Open Trip' : 'Paket Reguler' }}
+                        </span>
                     </div>
-                    <div class="flex items-center gap-3">
-                        <button type="button" @click="kurangiPeserta()" class="w-9 h-9 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-800 font-extrabold text-lg flex items-center justify-center transition">
-                            -
-                        </button>
-                        <span class="text-lg font-extrabold text-slate-900 min-w-[24px] text-center" x-text="pesertaList.length"></span>
-                        <button type="button" @click="tambahPeserta()" class="w-9 h-9 rounded-xl bg-sky-600 hover:bg-sky-700 text-white font-extrabold text-lg flex items-center justify-center transition">
-                            +
-                        </button>
+                @elseif($customTrip)
+                    <div class="p-4 bg-teal-50 rounded-2xl border border-teal-100">
+                        <h4 class="text-base font-extrabold text-slate-900">Custom Trip: {{ $customTrip->tujuan }}</h4>
+                        <p class="text-xs text-slate-600 mt-1">Rombongan Khusus &bull; {{ $customTrip->jumlah_peserta }} Peserta</p>
                     </div>
-                </div>
-            </div>
-        @endif
+                @endif
 
-        <!-- Formulir Data Peserta & Unggah KTP (F9-05, US-05, BR-13) -->
-        <div class="space-y-4">
-            <div class="flex items-center justify-between">
-                <h3 class="text-base font-extrabold text-slate-900">Data dan Dokumen Identitas Peserta</h3>
-                <span class="text-xs text-slate-500 font-medium">Diperlukan untuk asuransi dan manifes perjalanan</span>
-            </div>
-
-            <template x-for="(peserta, index) in pesertaList" :key="index">
-                <div class="bg-white p-6 rounded-3xl border border-slate-200/80 shadow-xs space-y-4">
-                    <div class="flex items-center justify-between pb-3 border-b border-slate-100">
-                        <div class="flex items-center gap-2">
-                            <span class="w-6 h-6 rounded-full bg-sky-600 text-white flex items-center justify-center text-xs font-bold" x-text="index + 1"></span>
-                            <h4 class="text-sm font-extrabold text-slate-900" x-text="'Peserta ' + (index + 1) + (index === 0 ? ' (Pemesan Utama)' : '')"></h4>
-                        </div>
-                        <button type="button" @click="hapusPeserta(index)" x-show="pesertaList.length > 1 && !isCustom" class="text-rose-500 hover:text-rose-700 text-xs font-bold">
-                            Hapus
-                        </button>
+                <!-- Calculation Rows matching Figma -->
+                <div class="pt-4 border-t border-slate-100 space-y-2.5 text-xs">
+                    <div class="flex justify-between text-slate-500">
+                        <span>Harga per peserta</span>
+                        <span class="font-mono font-semibold text-slate-800" x-text="formatRupiah(unitPrice)"></span>
+                    </div>
+                    <div class="flex justify-between text-slate-500">
+                        <span>Jumlah peserta</span>
+                        <span class="font-semibold text-slate-800" x-text="pesertaList.length + ' orang'"></span>
+                    </div>
+                    <div class="flex justify-between text-slate-500">
+                        <span>Subtotal biaya</span>
+                        <span class="font-mono font-semibold text-slate-800" x-text="formatRupiah(totalHarga)"></span>
+                    </div>
+                    <div class="flex justify-between text-slate-500">
+                        <span>Biaya layanan</span>
+                        <span class="font-mono font-semibold text-slate-800">Rp 0</span>
+                    </div>
+                    <div class="flex justify-between text-slate-500">
+                        <span>Diskon</span>
+                        <span class="font-mono font-semibold text-slate-800">Rp 0</span>
                     </div>
 
-                    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-                        <div class="sm:col-span-2 md:col-span-1">
-                            <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">Nama Lengkap (Sesuai KTP/Paspor)</label>
-                            <input type="text" :name="'peserta[' + index + '][nama_lengkap]'" x-model="peserta.nama_lengkap" required placeholder="Nama lengkap" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs sm:text-sm text-slate-800">
-                        </div>
-
-                        <div>
-                            <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">Jenis Identitas</label>
-                            <select :name="'peserta[' + index + '][jenis_identitas]'" x-model="peserta.jenis_identitas" required class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs sm:text-sm text-slate-800">
-                                <option value="ktp">KTP (NIK 16 Digit)</option>
-                                <option value="paspor">Paspor (Wisatawan Mancanegara)</option>
-                            </select>
-                        </div>
-
-                        <div>
-                            <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">Nomor Identitas</label>
-                            <input type="text" :name="'peserta[' + index + '][no_identitas]'" x-model="peserta.no_identitas" required placeholder="Contoh: 337201..." class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs sm:text-sm font-mono text-slate-800">
-                        </div>
-
-                        <div>
-                            <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">Nomor WhatsApp / HP (Opsional)</label>
-                            <input type="text" :name="'peserta[' + index + '][no_hp]'" x-model="peserta.no_hp" placeholder="08xxxxxxxx" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs sm:text-sm text-slate-800">
-                        </div>
-
-                        <!-- Unggah Berkas KTP/Paspor (BR-13) -->
-                        <div class="sm:col-span-2">
-                            <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">Unggah Foto KTP / Paspor</label>
-                            <input type="file" :name="'peserta[' + index + '][file_identitas]'" required accept="image/png,image/jpeg,image/jpg" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-600 file:mr-3 file:py-1 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-bold file:bg-sky-50 file:text-sky-700 hover:file:bg-sky-100">
-                            <span class="text-[11px] text-slate-400 mt-1 block">Format JPG/PNG, ukuran maksimum 5 MB. Dokumen disimpan di server privat terenkripsi.</span>
-                        </div>
+                    <div class="pt-3 border-t border-slate-200/80 flex items-baseline justify-between">
+                        <span class="text-xs font-bold text-slate-800">Total pembayaran</span>
+                        <span class="text-xl sm:text-2xl font-extrabold text-teal-800 font-mono" x-text="formatRupiah(totalHarga)"></span>
                     </div>
                 </div>
-            </template>
+
+                <!-- Orange Continue Button matching Figma -->
+                <div class="pt-2">
+                    <button type="submit" 
+                            form="booking-form"
+                            class="w-full py-3.5 bg-orange-500 hover:bg-orange-600 text-white font-extrabold text-sm text-center rounded-xl shadow-md transition">
+                        Lanjut ke Pembayaran &rarr;
+                    </button>
+                    <p class="text-[11px] text-center text-slate-400 mt-2">
+                        Harga termasuk transportasi, hotel, tiket wisata, dan pemandu.
+                    </p>
+                </div>
+
+            </div>
+
         </div>
 
-        <!-- Ringkasan Biaya & Konfirmasi Pesanan (F9-06, W-08) -->
-        <div class="bg-white p-6 sm:p-8 rounded-3xl border border-slate-200/80 shadow-md space-y-4">
-            <h3 class="text-base font-extrabold text-slate-900 pb-3 border-b border-slate-100">Ringkasan Rincian Biaya</h3>
-
-            <div class="space-y-2 text-xs">
-                <div class="flex items-center justify-between text-slate-600">
-                    <span>Jumlah Peserta:</span>
-                    <strong class="text-slate-900" x-text="pesertaList.length + ' Orang'"></strong>
-                </div>
-                <template x-if="!isCustom">
-                    <div class="flex items-center justify-between text-slate-600">
-                        <span>Biaya per Peserta:</span>
-                        <strong class="text-slate-900" x-text="formatRupiah(unitPrice)"></strong>
-                    </div>
-                </template>
-                <div class="pt-3 border-t border-slate-200 flex items-center justify-between text-sm">
-                    <span class="font-extrabold text-slate-900">Total Biaya Pemesanan:</span>
-                    <span class="text-2xl font-extrabold text-sky-600 font-mono" x-text="formatRupiah(totalBiaya)"></span>
-                </div>
-            </div>
-
-            <div class="p-4 bg-sky-50 rounded-2xl text-xs text-sky-800 space-y-1">
-                <strong>Catatan Penting:</strong>
-                <p>Setelah mengonfirmasi pemesanan, kursi akan ditahan selama 24 jam. Anda dapat mengunggah bukti transfer bank untuk diverifikasi oleh admin travel agar tiket digital diterbitkan.</p>
-            </div>
-
-            <div class="pt-2 flex items-center justify-between gap-4">
-                <a href="{{ route('paket.index') }}" class="px-5 py-2.5 bg-slate-100 text-slate-600 text-xs font-bold rounded-xl hover:bg-slate-200 transition">
-                    Batal
-                </a>
-                <button type="submit" class="px-7 py-3 bg-gradient-to-r from-sky-500 to-indigo-600 hover:from-sky-600 hover:to-indigo-700 text-white text-sm font-bold rounded-xl shadow-lg shadow-sky-500/25 transition">
-                    Konfirmasi Pemesanan &rarr;
-                </button>
-            </div>
-        </div>
-    </form>
+    </div>
 </div>
 
 <script>
-    function bookingFormManager(maxSeats, unitPrice, customPrice, isCustom) {
-        return {
-            maxSeats: maxSeats,
-            unitPrice: unitPrice,
-            customPrice: customPrice,
-            isCustom: isCustom,
-            pesertaList: isCustom 
-                ? Array.from({ length: maxSeats }, () => ({ nama_lengkap: '', jenis_identitas: 'ktp', no_identitas: '', no_hp: '' }))
-                : [{ nama_lengkap: '{{ auth()->user()->nama_lengkap ?? '' }}', jenis_identitas: 'ktp', no_identitas: '', no_hp: '{{ auth()->user()->no_hp ?? '' }}' }],
-            
-            get totalBiaya() {
-                if (this.isCustom) {
-                    return this.customPrice;
-                }
-                return this.pesertaList.length * this.unitPrice;
-            },
-
-            tambahPeserta() {
-                if (this.pesertaList.length < this.maxSeats) {
-                    this.pesertaList.push({ nama_lengkap: '', jenis_identitas: 'ktp', no_identitas: '', no_hp: '' });
-                } else {
-                    alert('Jumlah peserta telah mencapai batas sisa kuota kursi yang tersedia (' + this.maxSeats + ' kursi).');
-                }
-            },
-
-            kurangiPeserta() {
-                if (this.pesertaList.length > 1) {
-                    this.pesertaList.pop();
-                }
-            },
-
-            hapusPeserta(index) {
-                if (this.pesertaList.length > 1) {
-                    this.pesertaList.splice(index, 1);
-                }
-            },
-
-            formatRupiah(amount) {
-                return 'Rp ' + Number(amount).toLocaleString('id-ID');
+function bookingFormManager(maxSeats, unitPrice, customPrice, isCustom) {
+    return {
+        maxSeats: maxSeats,
+        unitPrice: isCustom ? (customPrice / maxSeats) : unitPrice,
+        isCustom: isCustom,
+        pesertaList: [
+            { nama_lengkap: '{{ auth()->user()->nama_lengkap ?? '' }}', jenis_identitas: 'ktp', no_identitas: '', no_hp: '{{ auth()->user()->no_hp ?? '' }}' }
+        ],
+        get totalHarga() {
+            if (this.isCustom) return customPrice;
+            return this.pesertaList.length * this.unitPrice;
+        },
+        tambahPeserta() {
+            if (this.pesertaList.length >= this.maxSeats) {
+                alert('Maksimal sisa kuota yang tersedia adalah ' + this.maxSeats + ' kursi.');
+                return;
             }
+            this.pesertaList.push({ nama_lengkap: '', jenis_identitas: 'ktp', no_identitas: '', no_hp: '' });
+        },
+        kurangiPeserta() {
+            if (this.pesertaList.length > 1) {
+                this.pesertaList.pop();
+            }
+        },
+        hapusPeserta(index) {
+            if (this.pesertaList.length > 1) {
+                this.pesertaList.splice(index, 1);
+            }
+        },
+        formatRupiah(angka) {
+            return 'Rp ' + Math.round(angka).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
         }
     }
+}
 </script>
 @endsection

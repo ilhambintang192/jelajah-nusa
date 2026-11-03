@@ -2,10 +2,10 @@
 
 @section('content')
 <div class="min-h-[80vh] flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
-    <div class="max-w-lg w-full bg-white p-8 sm:p-10 rounded-3xl shadow-xl shadow-slate-200/60 border border-slate-100">
+    <div class="max-w-lg w-full bg-white p-8 sm:p-10 rounded-3xl shadow-lg border border-slate-200/90">
         
         <div class="text-center mb-8">
-            <div class="w-12 h-12 rounded-2xl bg-gradient-to-tr from-sky-500 to-indigo-600 flex items-center justify-center text-white mx-auto shadow-md shadow-sky-500/20 mb-4">
+            <div class="w-12 h-12 rounded-full bg-teal-700 flex items-center justify-center text-white mx-auto shadow-sm mb-4">
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" stroke-width="2"/><polygon points="12,7 15,15 12,13 9,15" fill="currentColor"/></svg>
             </div>
             <h2 class="text-2xl font-extrabold text-slate-900 tracking-tight">Buat Akun Wisatawan</h2>
@@ -24,7 +24,7 @@
                        value="{{ old('nama_lengkap') }}" 
                        required 
                        placeholder="Contoh: Rina Wijaya" 
-                       class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500 transition text-slate-800">
+                       class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 transition text-slate-800">
             </div>
 
             <!-- Email & No. HP Grid -->
@@ -37,7 +37,7 @@
                            value="{{ old('email') }}" 
                            required 
                            placeholder="nama@email.com" 
-                           class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500 transition text-slate-800">
+                           class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 transition text-slate-800">
                 </div>
                 <div>
                     <label for="no_hp" class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">Nomor WhatsApp / HP</label>
@@ -47,7 +47,7 @@
                            value="{{ old('no_hp') }}" 
                            required 
                            placeholder="08123456789" 
-                           class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500 transition text-slate-800">
+                           class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 transition text-slate-800">
                 </div>
             </div>
 
@@ -60,7 +60,7 @@
                        value="{{ old('username') }}" 
                        required 
                        placeholder="rinawijaya" 
-                       class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500 transition text-slate-800">
+                       class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 transition text-slate-800">
             </div>
 
             <!-- Password & Konfirmasi Grid -->
@@ -72,7 +72,7 @@
                            name="password" 
                            required 
                            placeholder="Min. 8 karakter" 
-                           class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500 transition text-slate-800">
+                           class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 transition text-slate-800">
                 </div>
                 <div>
                     <label for="password_confirmation" class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">Ulangi Password</label>
@@ -81,13 +81,13 @@
                            name="password_confirmation" 
                            required 
                            placeholder="Ulangi password" 
-                           class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500 transition text-slate-800">
+                           class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 transition text-slate-800">
                 </div>
             </div>
 
             <div class="pt-2">
                 <button type="submit" 
-                        class="w-full py-3 px-4 bg-gradient-to-r from-sky-500 to-indigo-600 text-white text-sm font-bold rounded-xl shadow-lg shadow-sky-500/25 hover:shadow-sky-500/40 hover:-translate-y-0.5 transition-all">
+                        class="w-full py-3 px-4 bg-teal-700 hover:bg-teal-800 text-white text-sm font-bold rounded-xl shadow-xs transition">
                     Daftar Sekarang
                 </button>
             </div>
@@ -95,7 +95,7 @@
 
         <div class="mt-6 pt-6 border-t border-slate-100 text-center text-xs text-slate-500">
             Sudah memiliki akun Jelajah Nusa? 
-            <a href="{{ route('login') }}" class="font-bold text-sky-600 hover:text-sky-700">Masuk di sini</a>
+            <a href="{{ route('login') }}" class="font-bold text-teal-700 hover:text-teal-800">Masuk di sini</a>
         </div>
     </div>
 </div>
