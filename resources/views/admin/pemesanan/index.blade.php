@@ -24,7 +24,7 @@
                            name="cari" 
                            value="{{ $search }}" 
                            placeholder="Cari #PSN, nama pemesan, atau paket..." 
-                           class="w-full pl-9 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-sky-500/20 text-slate-700">
+                           class="w-full pl-9 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-teal-500/20 text-slate-700">
                     <svg class="w-4 h-4 text-slate-400 absolute left-3 top-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
                 </form>
 
@@ -51,8 +51,8 @@
                     </thead>
                     <tbody class="divide-y divide-slate-100 font-medium">
                         @forelse($pemesananList as $item)
-                            <tr class="hover:bg-slate-50/60 {{ $selectedPemesanan && $selectedPemesanan->id === $item->id ? 'bg-sky-50/50 font-bold' : '' }}">
-                                <td class="py-3.5 px-3 font-mono text-sky-600">
+                            <tr class="hover:bg-slate-50/60 {{ $selectedPemesanan && $selectedPemesanan->id === $item->id ? 'bg-teal-50/50 font-bold' : '' }}">
+                                <td class="py-3.5 px-3 font-mono text-teal-800">
                                     {{ $item->display_kode }}
                                 </td>
                                 <td class="py-3.5 px-3">
@@ -71,7 +71,7 @@
                                     </span>
                                 </td>
                                 <td class="py-3.5 px-2 text-right">
-                                    <a href="{{ route('admin.pemesanan.index', ['selected' => $item->id, 'status' => $status, 'cari' => $search]) }}" class="px-2.5 py-1 bg-white border border-slate-200 hover:border-sky-500 hover:text-sky-600 text-slate-700 rounded-lg text-[11px] font-bold shadow-2xs">
+                                    <a href="{{ route('admin.pemesanan.index', ['selected' => $item->id, 'status' => $status, 'cari' => $search]) }}" class="px-2.5 py-1 bg-white border border-slate-200 hover:border-teal-600 hover:text-teal-700 text-slate-700 rounded-lg text-[11px] font-bold shadow-2xs">
                                         Detail
                                     </a>
                                 </td>
@@ -100,7 +100,7 @@
                     <!-- Selected Order Header -->
                     <div class="pb-4 border-b border-slate-100 flex items-start justify-between">
                         <div>
-                            <span class="text-xs font-mono font-bold text-sky-600">{{ $selectedPemesanan->display_kode }}</span>
+                            <span class="text-xs font-mono font-bold text-teal-800">{{ $selectedPemesanan->display_kode }}</span>
                             <h3 class="text-lg font-extrabold text-slate-900 mt-1">{{ $selectedPemesanan->judul_trip }}</h3>
                             <p class="text-xs text-slate-400">Pemesan: {{ $selectedPemesanan->user->nama_lengkap }} ({{ $selectedPemesanan->user->no_hp }})</p>
                         </div>
@@ -141,7 +141,7 @@
                                             <p class="text-[10px] text-slate-400">HP: {{ $pst->no_hp }}</p>
                                         @endif
                                     </div>
-                                    <a href="{{ route('dokumen.identitas', $pst->id) }}" target="_blank" class="px-3 py-1.5 bg-white border border-slate-200 hover:bg-sky-50 hover:border-sky-300 hover:text-sky-600 text-slate-700 text-xs font-bold rounded-xl transition shadow-2xs flex-shrink-0 flex items-center gap-1">
+                                    <a href="{{ route('dokumen.identitas', $pst->id) }}" target="_blank" class="px-3 py-1.5 bg-white border border-slate-200 hover:bg-teal-50 hover:border-teal-300 hover:text-teal-700 text-slate-700 text-xs font-bold rounded-xl transition shadow-2xs flex-shrink-0 flex items-center gap-1">
                                         <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
                                         Lihat KTP
                                     </a>

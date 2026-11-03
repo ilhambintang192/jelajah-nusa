@@ -20,7 +20,7 @@
                 <h3 class="text-base font-extrabold text-slate-900">Pengajuan Masuk</h3>
                 <div class="flex items-center gap-1.5 text-xs">
                     <a href="{{ route('admin.custom-trip.index') }}" class="px-2.5 py-1 rounded-lg font-bold {{ empty($status) ? 'bg-slate-900 text-white' : 'bg-slate-100 text-slate-600' }}">Semua</a>
-                    <a href="{{ route('admin.custom-trip.index', ['status' => 'diajukan']) }}" class="px-2.5 py-1 rounded-lg font-bold {{ $status === 'diajukan' ? 'bg-sky-600 text-white' : 'bg-sky-50 text-sky-700' }}">Diajukan</a>
+                    <a href="{{ route('admin.custom-trip.index', ['status' => 'diajukan']) }}" class="px-2.5 py-1 rounded-lg font-bold {{ $status === 'diajukan' ? 'bg-teal-700 text-white' : 'bg-teal-50 text-teal-800' }}">Diajukan</a>
                     <a href="{{ route('admin.custom-trip.index', ['status' => 'ditawarkan']) }}" class="px-2.5 py-1 rounded-lg font-bold {{ $status === 'ditawarkan' ? 'bg-amber-600 text-white' : 'bg-amber-50 text-amber-700' }}">Ditawarkan</a>
                     <a href="{{ route('admin.custom-trip.index', ['status' => 'disetujui']) }}" class="px-2.5 py-1 rounded-lg font-bold {{ $status === 'disetujui' ? 'bg-emerald-600 text-white' : 'bg-emerald-50 text-emerald-700' }}">Disetujui</a>
                 </div>
@@ -40,7 +40,7 @@
                     </thead>
                     <tbody class="divide-y divide-slate-100 font-medium">
                         @forelse($customTripList as $trip)
-                            <tr class="hover:bg-slate-50/60 {{ $selectedTrip && $selectedTrip->id === $trip->id ? 'bg-sky-50/50 font-bold' : '' }}">
+                            <tr class="hover:bg-slate-50/60 {{ $selectedTrip && $selectedTrip->id === $trip->id ? 'bg-teal-50/50 font-bold' : '' }}">
                                 <td class="py-3.5 px-3">
                                     <span class="block font-bold text-slate-900">{{ $trip->user->nama_lengkap ?? '—' }}</span>
                                     <span class="block text-[11px] text-slate-400 font-normal">{{ $trip->user->no_hp }}</span>
@@ -55,12 +55,12 @@
                                     {{ $trip->tanggal_diinginkan->translatedFormat('d M Y') }} ({{ $trip->durasi_hari }} Hari)
                                 </td>
                                 <td class="py-3.5 px-3">
-                                    <span class="px-2 py-0.5 rounded-full text-[10px] font-bold uppercase {{ $trip->status === 'disetujui' ? 'bg-emerald-50 text-emerald-700' : ($trip->status === 'ditawarkan' ? 'bg-amber-50 text-amber-700' : ($trip->status === 'diajukan' ? 'bg-sky-50 text-sky-700' : 'bg-rose-50 text-rose-700')) }}">
+                                    <span class="px-2 py-0.5 rounded-full text-[10px] font-bold uppercase {{ $trip->status === 'disetujui' ? 'bg-emerald-50 text-emerald-700' : ($trip->status === 'ditawarkan' ? 'bg-amber-50 text-amber-700' : ($trip->status === 'diajukan' ? 'bg-teal-50 text-teal-800' : 'bg-rose-50 text-rose-700')) }}">
                                         {{ $trip->status }}
                                     </span>
                                 </td>
                                 <td class="py-3.5 px-2 text-right">
-                                    <a href="{{ route('admin.custom-trip.index', ['selected' => $trip->id, 'status' => $status]) }}" class="px-2.5 py-1 bg-white border border-slate-200 hover:border-sky-500 hover:text-sky-600 text-slate-700 rounded-lg text-[11px] font-bold">
+                                    <a href="{{ route('admin.custom-trip.index', ['selected' => $trip->id, 'status' => $status]) }}" class="px-2.5 py-1 bg-white border border-slate-200 hover:border-teal-600 hover:text-teal-700 text-slate-700 rounded-lg text-[11px] font-bold">
                                         Pilih
                                     </a>
                                 </td>
@@ -87,7 +87,7 @@
                 <div class="bg-white p-6 rounded-3xl border border-slate-200/80 shadow-xs space-y-6">
                     
                     <div class="pb-4 border-b border-slate-100">
-                        <span class="px-2 py-0.5 rounded-md text-[10px] font-bold uppercase bg-sky-50 text-sky-700">Penawaran Paket</span>
+                        <span class="px-2 py-0.5 rounded-md text-[10px] font-bold uppercase bg-teal-50 text-teal-800">Penawaran Paket</span>
                         <h3 class="text-lg font-extrabold text-slate-900 mt-1">{{ $selectedTrip->tujuan }}</h3>
                         <p class="text-xs text-slate-500">{{ $selectedTrip->jumlah_peserta }} Orang &bull; {{ $selectedTrip->durasi_hari }} Hari &bull; Pemohon: {{ $selectedTrip->user->nama_lengkap }}</p>
                     </div>
@@ -130,7 +130,7 @@
                         </div>
 
                         <div class="pt-2 flex items-center justify-between gap-3">
-                            <button type="submit" class="flex-1 py-2.5 bg-sky-600 hover:bg-sky-700 text-white text-xs font-bold rounded-xl shadow-md transition">
+                            <button type="submit" class="flex-1 py-2.5 bg-teal-700 hover:bg-teal-800 text-white text-xs font-bold rounded-xl shadow-xs transition">
                                 Kirim Penawaran Biaya
                             </button>
                         </div>

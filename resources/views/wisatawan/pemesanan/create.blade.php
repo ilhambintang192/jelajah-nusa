@@ -247,7 +247,7 @@
                         <p class="text-xs text-slate-500 mt-1">
                             Berangkat {{ $jadwal ? $jadwal->tanggal_berangkat->translatedFormat('d M Y') : '—' }} &bull; Pukul {{ substr($paket->jam_kumpul ?? '05:00', 0, 5) }} WIB
                         </p>
-                        <span class="inline-block mt-2 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-sky-50 text-sky-700">
+                        <span class="inline-block mt-2 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-teal-50 text-teal-800">
                             {{ $paket->jenis_layanan === 'open_trip' ? 'Open Trip' : 'Paket Reguler' }}
                         </span>
                     </div>

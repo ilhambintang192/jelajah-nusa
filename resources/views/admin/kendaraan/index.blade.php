@@ -48,7 +48,7 @@
                 </div>
 
                 <div class="pt-2">
-                    <button type="submit" class="w-full py-2.5 bg-sky-600 hover:bg-sky-700 text-white text-xs sm:text-sm font-bold rounded-xl shadow-md transition">
+                    <button type="submit" class="w-full py-2.5 bg-teal-700 hover:bg-teal-800 text-white text-xs sm:text-sm font-bold rounded-xl shadow-xs transition">
                         Simpan Kendaraan
                     </button>
                 </div>
@@ -83,7 +83,7 @@
                                     {{ $k->jenis_kendaraan }}
                                 </td>
                                 <td class="py-3.5 px-3">
-                                    <span class="px-2 py-0.5 rounded-lg bg-sky-50 text-sky-800 font-bold">{{ $k->kapasitas }} kursi</span>
+                                    <span class="px-2 py-0.5 rounded-lg bg-teal-50 text-teal-800 font-bold">{{ $k->kapasitas }} kursi</span>
                                 </td>
                                 <td class="py-3.5 px-3 font-mono text-slate-700">
                                     {{ $k->plat_nomor ?: '—' }}
@@ -99,7 +99,7 @@
                                 <td class="py-3.5 px-3 text-right space-x-2">
                                     <button type="button" 
                                             @click="editModalOpen = true; editData = { id: {{ $k->id }}, jenis_kendaraan: '{{ addslashes($k->jenis_kendaraan) }}', kapasitas: {{ $k->kapasitas }}, plat_nomor: '{{ addslashes($k->plat_nomor ?? '') }}', status: '{{ $k->status }}' }" 
-                                            class="text-sky-600 hover:text-sky-800 font-bold">
+                                            class="text-teal-700 hover:text-teal-900 font-bold">
                                         Ubah
                                     </button>
                                     <span class="text-slate-200">|</span>
@@ -151,7 +151,7 @@
                 </div>
                 <div class="flex justify-end gap-2 pt-2">
                     <button type="button" @click="editModalOpen = false" class="px-4 py-2 bg-slate-100 text-slate-700 text-xs font-bold rounded-xl">Batal</button>
-                    <button type="submit" class="px-4 py-2 bg-sky-600 text-white text-xs font-bold rounded-xl">Simpan Perubahan</button>
+                    <button type="submit" class="px-4 py-2 bg-teal-700 hover:bg-teal-800 text-white text-xs font-bold rounded-xl shadow-xs transition">Simpan Perubahan</button>
                 </div>
             </form>
         </div>

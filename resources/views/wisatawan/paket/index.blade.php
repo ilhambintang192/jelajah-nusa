@@ -138,7 +138,7 @@
                     <div class="p-5 flex-1 flex flex-col justify-between space-y-4">
                         <div class="space-y-2">
                             <div class="flex items-center justify-between text-xs">
-                                <span class="px-2 py-0.5 rounded-md text-[11px] font-semibold bg-sky-50 text-sky-700">
+                                <span class="px-2 py-0.5 rounded-md text-[11px] font-semibold bg-teal-50 text-teal-800">
                                     {{ $pkt->jenis_layanan === 'open_trip' ? 'Open Trip' : 'Paket Reguler' }}
                                 </span>
                                 @if($sisaKursi > 0)

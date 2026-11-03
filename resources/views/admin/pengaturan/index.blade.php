@@ -9,13 +9,13 @@
             <p class="text-xs sm:text-sm text-slate-500 mt-1">Konfigurasi rekening bank pembayaran, batas waktu transfer, dan otorisasi pengguna</p>
         </div>
         <div class="flex items-center gap-2">
-            <button @click="tab = 'rekening'" :class="tab === 'rekening' ? 'bg-sky-600 text-white' : 'bg-white text-slate-700 hover:bg-slate-50'" class="px-3.5 py-2 rounded-xl text-xs font-bold transition border border-slate-200">
+            <button @click="tab = 'rekening'" :class="tab === 'rekening' ? 'bg-teal-700 text-white' : 'bg-white text-slate-700 hover:bg-slate-50'" class="px-3.5 py-2 rounded-xl text-xs font-bold transition border border-slate-200">
                 Rekening &amp; Batas Waktu
             </button>
-            <button @click="tab = 'pengguna'" :class="tab === 'pengguna' ? 'bg-sky-600 text-white' : 'bg-white text-slate-700 hover:bg-slate-50'" class="px-3.5 py-2 rounded-xl text-xs font-bold transition border border-slate-200">
+            <button @click="tab = 'pengguna'" :class="tab === 'pengguna' ? 'bg-teal-700 text-white' : 'bg-white text-slate-700 hover:bg-slate-50'" class="px-3.5 py-2 rounded-xl text-xs font-bold transition border border-slate-200">
                 Manajemen Pengguna
             </button>
-            <button @click="tab = 'log'" :class="tab === 'log' ? 'bg-sky-600 text-white' : 'bg-white text-slate-700 hover:bg-slate-50'" class="px-3.5 py-2 rounded-xl text-xs font-bold transition border border-slate-200">
+            <button @click="tab = 'log'" :class="tab === 'log' ? 'bg-teal-700 text-white' : 'bg-white text-slate-700 hover:bg-slate-50'" class="px-3.5 py-2 rounded-xl text-xs font-bold transition border border-slate-200">
                 Log Aktivitas
             </button>
         </div>
@@ -53,7 +53,7 @@
                 </div>
 
                 <div class="pt-2">
-                    <button type="submit" class="px-6 py-2.5 bg-sky-600 hover:bg-sky-700 text-white text-xs sm:text-sm font-bold rounded-xl shadow-md transition">
+                    <button type="submit" class="px-6 py-2.5 bg-teal-700 hover:bg-teal-800 text-white text-xs sm:text-sm font-bold rounded-xl shadow-xs transition">
                         Simpan Pengaturan
                     </button>
                 </div>
@@ -71,7 +71,7 @@
                     <h3 class="text-base font-extrabold text-slate-900">Akun Administrator</h3>
                     <p class="text-xs text-slate-400">Staf travel yang memiliki hak akses operasional admin</p>
                 </div>
-                <button type="button" @click="adminModal = true" class="px-3.5 py-1.5 bg-sky-600 text-white hover:bg-sky-700 text-xs font-bold rounded-xl shadow-xs transition flex items-center gap-1.5">
+                <button type="button" @click="adminModal = true" class="px-3.5 py-1.5 bg-teal-700 text-white hover:bg-teal-800 text-xs font-bold rounded-xl shadow-xs transition flex items-center gap-1.5">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
                     Tambah Admin Baru
                 </button>
@@ -84,7 +84,7 @@
                             <h4 class="text-xs font-bold text-slate-900">{{ $adm->nama_lengkap }}</h4>
                             <p class="text-[11px] text-slate-400 font-mono">@<span>{{ $adm->username }}</span> &bull; {{ $adm->email }}</p>
                         </div>
-                        <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-sky-100 text-sky-800">Admin</span>
+                        <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-teal-100 text-teal-800">Admin</span>
                     </div>
                 @endforeach
             </div>
@@ -155,7 +155,7 @@
                     <div class="p-3.5 bg-slate-50 border border-slate-100 rounded-2xl flex items-start justify-between gap-4 text-xs">
                         <div>
                             <div class="flex items-center gap-2 mb-1">
-                                <span class="px-2 py-0.5 rounded-md bg-sky-100 text-sky-800 font-mono font-bold text-[10px] uppercase">
+                                <span class="px-2 py-0.5 rounded-md bg-teal-100 text-teal-800 font-mono font-bold text-[10px] uppercase">
                                     {{ $log->aksi }}
                                 </span>
                                 <span class="font-bold text-slate-900">{{ $log->user ? $log->user->nama_lengkap : 'Sistem Otomatis' }}</span>
@@ -210,7 +210,7 @@
                 </div>
                 <div class="flex justify-end gap-2 pt-3">
                     <button type="button" @click="adminModal = false" class="px-4 py-2 bg-slate-100 text-slate-700 text-xs font-bold rounded-xl">Batal</button>
-                    <button type="submit" class="px-5 py-2 bg-sky-600 text-white text-xs font-bold rounded-xl">Simpan Admin</button>
+                    <button type="submit" class="px-5 py-2 bg-teal-700 hover:bg-teal-800 text-white text-xs font-bold rounded-xl shadow-xs transition">Simpan Admin</button>
                 </div>
             </form>
         </div>

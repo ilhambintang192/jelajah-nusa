@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="id" class="h-full bg-slate-50">
+<html lang="id" class="h-full bg-[#FAF7F2]">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -14,7 +14,7 @@
         [x-cloak] { display: none !important; }
     </style>
 </head>
-<body class="h-full flex overflow-hidden text-slate-800 bg-slate-50" x-data="{ sidebarOpen: false }">
+<body class="h-full flex overflow-hidden text-slate-800 bg-[#FAF7F2]" x-data="{ sidebarOpen: false }">
 
     <!-- Mobile Sidebar Backdrop -->
     <div x-show="sidebarOpen" 
@@ -153,7 +153,7 @@
     </aside>
 
     <!-- Main Workspace -->
-    <div class="flex-1 flex flex-col min-w-0 overflow-hidden bg-slate-50">
+    <div class="flex-1 flex flex-col min-w-0 overflow-hidden bg-[#FAF7F2]">
         
         <!-- Header (Global Search & Profile matching mockup) -->
         <header class="h-20 bg-white border-b border-slate-200 flex items-center justify-between px-6 z-10">

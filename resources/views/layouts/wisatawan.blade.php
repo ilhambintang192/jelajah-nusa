@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="id" class="h-full bg-slate-50">
+<html lang="id" class="h-full bg-[#FAF7F2]">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -14,7 +14,7 @@
         [x-cloak] { display: none !important; }
     </style>
 </head>
-<body class="min-h-full flex flex-col text-slate-800 bg-slate-50">
+<body class="min-h-full flex flex-col text-slate-800 bg-[#FAF7F2]">
 
     <!-- Top Navigation Bar -->
     <header class="sticky top-0 z-40 bg-white border-b border-slate-200/80 shadow-xs" x-data="{ mobileMenuOpen: false }">

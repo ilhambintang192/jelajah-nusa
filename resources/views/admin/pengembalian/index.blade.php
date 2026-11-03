@@ -44,13 +44,13 @@
                         $isPesananBatal = $psn->status === 'dibatalkan';
                     @endphp
                     <div class="p-4 rounded-2xl border transition-all flex flex-col justify-between cursor-pointer"
-                         :class="selectedId === {{ $psn->id }} ? 'bg-sky-50/70 border-sky-500 ring-2 ring-sky-500/20 shadow-md' : 'bg-slate-50/50 hover:bg-slate-50 border-slate-200/80 hover:border-slate-300'"
+                         :class="selectedId === {{ $psn->id }} ? 'bg-teal-50/70 border-teal-600 ring-2 ring-teal-600/20 shadow-md' : 'bg-slate-50/50 hover:bg-slate-50 border-slate-200/80 hover:border-slate-300'"
                          @click="pilihPemesanan({{ $psn->id }})"
                          x-show="filterKategori === 'semua' || (filterKategori === 'jadwal' && {{ $isJadwalBermasalah ? 'true' : 'false' }}) || (filterKategori === 'pesanan' && {{ $isPesananBatal ? 'true' : 'false' }})">
                         
                         <div class="space-y-2.5">
                             <div class="flex items-center justify-between">
-                                <span class="font-mono font-bold text-xs text-sky-700 bg-sky-100/80 px-2.5 py-0.5 rounded-lg">
+                                <span class="font-mono font-bold text-xs text-teal-800 bg-teal-100/80 px-2.5 py-0.5 rounded-lg">
                                     {{ $psn->display_kode }}
                                 </span>
                                 @if($isJadwalBermasalah)
@@ -86,7 +86,7 @@
                             </div>
 
                             <button type="button" class="px-3 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-1"
-                                    :class="selectedId === {{ $psn->id }} ? 'bg-sky-600 text-white' : 'bg-white text-slate-700 hover:bg-sky-50 hover:text-sky-700 border border-slate-200'">
+                                    :class="selectedId === {{ $psn->id }} ? 'bg-teal-700 text-white' : 'bg-white text-slate-700 hover:bg-teal-50 hover:text-teal-800 border border-slate-200'">
                                 <span x-text="selectedId === {{ $psn->id }} ? '✓ Dipilih' : 'Pilih &rarr;'"></span>
                             </button>
                         </div>
@@ -107,10 +107,10 @@
             </div>
 
             <!-- Kartu Pemesanan yang Sedang Terpilih -->
-            <div x-show="selectedOrder" class="p-4 bg-sky-50 border border-sky-200 rounded-2xl space-y-2">
+            <div x-show="selectedOrder" class="p-4 bg-teal-50 border border-teal-200 rounded-2xl space-y-2">
                 <div class="flex items-center justify-between">
-                    <span class="text-[10px] font-extrabold uppercase tracking-wider text-sky-800">Pemesanan Terpilih</span>
-                    <button type="button" @click="resetPemesanan()" class="text-[11px] font-bold text-sky-600 hover:underline">Ganti</button>
+                    <span class="text-[10px] font-extrabold uppercase tracking-wider text-teal-800">Pemesanan Terpilih</span>
+                    <button type="button" @click="resetPemesanan()" class="text-[11px] font-bold text-teal-700 hover:underline">Ganti</button>
                 </div>
                 <div>
                     <h4 class="text-sm font-extrabold text-slate-900" x-text="selectedOrder ? selectedOrder.judul_trip : ''"></h4>
@@ -118,7 +118,7 @@
                         <span class="font-bold text-slate-800" x-text="selectedOrder ? selectedOrder.user_nama : ''"></span> &bull; 
                         <span x-text="selectedOrder ? selectedOrder.display_kode : ''"></span>
                     </p>
-                    <div class="flex items-center justify-between pt-2 mt-2 border-t border-sky-100 text-xs">
+                    <div class="flex items-center justify-between pt-2 mt-2 border-t border-teal-100 text-xs">
                         <span class="text-slate-500">Maks. Dana Terbayar:</span>
                         <strong class="text-emerald-700 font-mono" x-text="selectedOrder ? selectedOrder.total_terbayar_format : 'Rp 0'"></strong>
                     </div>
@@ -143,12 +143,12 @@
                 <div>
                     <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">Jenis Tindakan</label>
                     <div class="grid grid-cols-2 gap-3">
-                        <label class="flex items-center gap-2 p-3 rounded-xl border border-slate-200 cursor-pointer text-xs font-bold" :class="jenisPengembalian === 'refund' ? 'bg-sky-50 border-sky-500 text-sky-700' : 'bg-slate-50 text-slate-700'">
-                            <input type="radio" name="jenis" value="refund" x-model="jenisPengembalian" class="text-sky-600">
+                        <label class="flex items-center gap-2 p-3 rounded-xl border border-slate-200 cursor-pointer text-xs font-bold" :class="jenisPengembalian === 'refund' ? 'bg-teal-50 border-teal-600 text-teal-800' : 'bg-slate-50 text-slate-700'">
+                            <input type="radio" name="jenis" value="refund" x-model="jenisPengembalian" class="text-teal-700">
                             Refund Dana
                         </label>
-                        <label class="flex items-center gap-2 p-3 rounded-xl border border-slate-200 cursor-pointer text-xs font-bold" :class="jenisPengembalian === 'pindah_jadwal' ? 'bg-sky-50 border-sky-500 text-sky-700' : 'bg-slate-50 text-slate-700'">
-                            <input type="radio" name="jenis" value="pindah_jadwal" x-model="jenisPengembalian" class="text-sky-600">
+                        <label class="flex items-center gap-2 p-3 rounded-xl border border-slate-200 cursor-pointer text-xs font-bold" :class="jenisPengembalian === 'pindah_jadwal' ? 'bg-teal-50 border-teal-600 text-teal-800' : 'bg-slate-50 text-slate-700'">
+                            <input type="radio" name="jenis" value="pindah_jadwal" x-model="jenisPengembalian" class="text-teal-700">
                             Pindah Jadwal
                         </label>
                     </div>
@@ -158,7 +158,7 @@
                 <div x-show="jenisPengembalian === 'refund'" class="space-y-1.5">
                     <div class="flex items-center justify-between">
                         <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider">Nominal Refund (Rp)</label>
-                        <button type="button" x-show="selectedOrder" @click="nominalInput = selectedOrder.total_terbayar" class="text-[11px] font-bold text-sky-600 hover:underline">
+                        <button type="button" x-show="selectedOrder" @click="nominalInput = selectedOrder.total_terbayar" class="text-[11px] font-bold text-teal-700 hover:underline">
                             Gunakan Refund Penuh
                         </button>
                     </div>
@@ -184,7 +184,7 @@
                     <textarea name="alasan" required rows="3" placeholder="Contoh: Jadwal ditunda akibat cuaca buruk di laut perairan Komodo atau permintaan pembatalan dari pemesan..." class="w-full px-3.5 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-800"></textarea>
                 </div>
 
-                <button type="submit" class="w-full py-2.5 bg-sky-600 hover:bg-sky-700 text-white text-xs font-bold rounded-xl shadow-md transition">
+                <button type="submit" class="w-full py-2.5 bg-teal-700 hover:bg-teal-800 text-white text-xs font-bold rounded-xl shadow-xs transition">
                     Simpan &amp; Proses Pengembalian
                 </button>
             </form>
@@ -218,14 +218,14 @@
                                 <td class="py-3 px-3 text-slate-400 whitespace-nowrap">
                                     {{ $rw->tanggal_pengembalian->format('d/m/Y') }}
                                 </td>
-                                <td class="py-3 px-3 font-mono font-bold text-sky-600 whitespace-nowrap">
+                                <td class="py-3 px-3 font-mono font-bold text-teal-800 whitespace-nowrap">
                                     {{ $rw->pemesanan ? $rw->pemesanan->display_kode : '—' }}
                                 </td>
                                 <td class="py-3 px-3 text-slate-800 font-bold">
                                     {{ $rw->pemesanan->user->nama_lengkap ?? '—' }}
                                 </td>
                                 <td class="py-3 px-2 whitespace-nowrap">
-                                    <span class="px-2 py-0.5 rounded-full text-[10px] font-bold uppercase {{ $rw->jenis === 'refund' ? 'bg-amber-100 text-amber-800' : 'bg-sky-100 text-sky-800' }}">
+                                    <span class="px-2 py-0.5 rounded-full text-[10px] font-bold uppercase {{ $rw->jenis === 'refund' ? 'bg-amber-100 text-amber-800' : 'bg-teal-100 text-teal-800' }}">
                                         {{ $rw->jenis === 'refund' ? 'Refund' : 'Reschedule' }}
                                     </span>
                                 </td>

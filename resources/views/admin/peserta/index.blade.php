@@ -18,7 +18,7 @@
                        name="cari" 
                        value="{{ $search }}" 
                        placeholder="Cari nama peserta, NIK/Paspor, nomor HP..." 
-                       class="w-full pl-9 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-sky-500/20 text-slate-700">
+                       class="w-full pl-9 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-teal-500/20 text-slate-700">
                 <svg class="w-4 h-4 text-slate-400 absolute left-3 top-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
             </form>
             <span class="text-xs font-bold text-slate-500">Total: {{ $pesertaList->total() }} Peserta</span>
@@ -51,7 +51,7 @@
                             <td class="py-3.5 px-3 text-slate-600">
                                 {{ $pst->no_hp ?: '—' }}
                             </td>
-                            <td class="py-3.5 px-3 font-mono font-bold text-sky-600">
+                            <td class="py-3.5 px-3 font-mono font-bold text-teal-800">
                                 {{ $pst->pemesanan ? $pst->pemesanan->display_kode : '—' }}
                             </td>
                             <td class="py-3.5 px-3 max-w-[180px] truncate text-slate-700">
@@ -67,7 +67,7 @@
                                 @endif
                             </td>
                             <td class="py-3.5 px-3 text-right space-x-2">
-                                <a href="{{ route('dokumen.identitas', $pst->id) }}" target="_blank" class="text-sky-600 hover:text-sky-800 font-bold">
+                                <a href="{{ route('dokumen.identitas', $pst->id) }}" target="_blank" class="text-teal-700 hover:text-teal-900 font-bold">
                                     Lihat KTP
                                 </a>
                                 <span class="text-slate-200">|</span>
@@ -124,7 +124,7 @@
                 </div>
                 <div class="flex justify-end gap-2 pt-2">
                     <button type="button" @click="editModal = false" class="px-4 py-2 bg-slate-100 text-slate-700 text-xs font-bold rounded-xl">Batal</button>
-                    <button type="submit" class="px-4 py-2 bg-sky-600 text-white text-xs font-bold rounded-xl">Simpan Data</button>
+                    <button type="submit" class="px-4 py-2 bg-teal-700 hover:bg-teal-800 text-white text-xs font-bold rounded-xl shadow-xs transition">Simpan Data</button>
                 </div>
             </form>
         </div>

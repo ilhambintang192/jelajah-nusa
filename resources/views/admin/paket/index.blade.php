@@ -53,7 +53,7 @@
                             </a>
                             <p class="text-xs text-slate-500">{{ $p->destinasi }}</p>
                             <div class="flex items-center gap-2 pt-0.5">
-                                <span class="px-2 py-0.5 rounded-md text-[10px] font-bold uppercase {{ $p->jenis_layanan === 'open_trip' ? 'bg-sky-50 text-sky-700' : 'bg-emerald-50 text-emerald-700' }}">
+                                <span class="px-2 py-0.5 rounded-md text-[10px] font-bold uppercase {{ $p->jenis_layanan === 'open_trip' ? 'bg-teal-50 text-teal-800' : 'bg-emerald-50 text-emerald-700' }}">
                                     {{ $p->jenis_layanan === 'open_trip' ? 'Open Trip' : 'Paket Reguler' }}
                                 </span>
                                 <span class="px-2 py-0.5 rounded-md text-[10px] font-bold bg-slate-100 text-slate-600">

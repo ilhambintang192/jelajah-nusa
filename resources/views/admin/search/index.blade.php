@@ -4,7 +4,7 @@
 <div class="py-6 space-y-6">
     <div>
         <h1 class="text-2xl font-extrabold text-slate-900 tracking-tight">Hasil Pencarian Global</h1>
-        <p class="text-xs sm:text-sm text-slate-500 mt-1">Kata kunci: <strong class="text-sky-600 font-mono">"{{ $q }}"</strong></p>
+        <p class="text-xs sm:text-sm text-slate-500 mt-1">Kata kunci: <strong class="text-teal-700 font-mono">"{{ $q }}"</strong></p>
     </div>
 
     @if(empty($q) || (count($pemesanan) === 0 && count($peserta) === 0 && count($paket) === 0))
@@ -22,8 +22,8 @@
                 </div>
                 <div class="space-y-2">
                     @forelse($pemesanan as $psn)
-                        <a href="{{ route('admin.pemesanan.index', ['selected' => $psn->id]) }}" class="p-3 bg-slate-50 hover:bg-sky-50 rounded-2xl block transition border border-slate-100">
-                            <span class="text-xs font-mono font-bold text-sky-600 block">{{ $psn->display_kode }}</span>
+                        <a href="{{ route('admin.pemesanan.index', ['selected' => $psn->id]) }}" class="p-3 bg-slate-50 hover:bg-teal-50 rounded-2xl block transition border border-slate-100">
+                            <span class="text-xs font-mono font-bold text-teal-800 block">{{ $psn->display_kode }}</span>
                             <span class="text-xs font-bold text-slate-900 block truncate">{{ $psn->judul_trip }}</span>
                             <span class="text-[11px] text-slate-500 block">Pemesan: {{ $psn->user->nama_lengkap ?? '—' }} ({{ $psn->jumlah_peserta }} org)</span>
                         </a>
@@ -45,7 +45,7 @@
                                 <strong class="text-slate-900 block">{{ $pst->nama_lengkap }}</strong>
                                 <span class="text-[11px] font-mono text-slate-500">{{ strtoupper($pst->jenis_identitas) }}: {{ $pst->no_identitas }}</span>
                             </div>
-                            <a href="{{ route('dokumen.identitas', $pst->id) }}" target="_blank" class="px-2.5 py-1 bg-white border border-slate-200 rounded-lg text-[10px] font-bold text-sky-600 hover:bg-sky-50">
+                            <a href="{{ route('dokumen.identitas', $pst->id) }}" target="_blank" class="px-2.5 py-1 bg-white border border-slate-200 rounded-lg text-[10px] font-bold text-teal-700 hover:bg-teal-50">
                                 KTP
                             </a>
                         </div>
@@ -62,7 +62,7 @@
                 </div>
                 <div class="space-y-2">
                     @forelse($paket as $pkt)
-                        <a href="{{ route('admin.paket.index', ['selected' => $pkt->id]) }}" class="p-3 bg-slate-50 hover:bg-sky-50 rounded-2xl block transition border border-slate-100">
+                        <a href="{{ route('admin.paket.index', ['selected' => $pkt->id]) }}" class="p-3 bg-slate-50 hover:bg-teal-50 rounded-2xl block transition border border-slate-100">
                             <span class="text-xs font-bold text-slate-900 block truncate">{{ $pkt->nama_paket }}</span>
                             <span class="text-[11px] text-slate-500 block">{{ $pkt->destinasi }} &bull; {{ $pkt->harga_format }}</span>
                         </a>

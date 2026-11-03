@@ -74,7 +74,7 @@
 
         <div class="bg-white p-5 rounded-3xl border border-slate-200/80 shadow-xs">
             <span class="text-xs font-bold text-slate-500 uppercase tracking-wider block mb-1">Total Wisatawan</span>
-            <span class="text-2xl font-extrabold text-sky-600">{{ $laporan['total_peserta'] }}</span>
+            <span class="text-2xl font-extrabold text-teal-800">{{ $laporan['total_peserta'] }}</span>
             <p class="text-[11px] text-slate-400 mt-1">Peserta terdaftar aktif</p>
         </div>
     </div>
@@ -115,7 +115,7 @@
                                 {{ $row['destinasi'] }}
                             </td>
                             <td class="py-3.5 px-3">
-                                <span class="px-2 py-0.5 rounded-md text-[10px] font-bold uppercase {{ $row['jenis_layanan'] === 'Open Trip' ? 'bg-indigo-50 text-indigo-700' : 'bg-emerald-50 text-emerald-700' }}">
+                                <span class="px-2 py-0.5 rounded-md text-[10px] font-bold uppercase {{ $row['jenis_layanan'] === 'Open Trip' ? 'bg-teal-50 text-teal-800' : 'bg-emerald-50 text-emerald-700' }}">
                                     {{ $row['jenis_layanan'] }}
                                 </span>
                             </td>

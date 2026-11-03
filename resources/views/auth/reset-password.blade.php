@@ -28,7 +28,7 @@
                 <input type="password" id="password_confirmation" name="password_confirmation" required placeholder="Ulangi password" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm text-slate-800">
             </div>
 
-            <button type="submit" class="w-full py-3 px-4 bg-sky-600 hover:bg-sky-700 text-white text-sm font-bold rounded-xl shadow-md transition mt-4">
+            <button type="submit" class="w-full py-3 px-4 bg-teal-700 hover:bg-teal-800 text-white text-sm font-bold rounded-xl shadow-xs transition mt-4">
                 Simpan Password Baru
             </button>
         </form>

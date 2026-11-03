@@ -13,16 +13,16 @@
             @csrf
             <div>
                 <label for="email" class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">Email Akun</label>
-                <input type="email" id="email" name="email" value="{{ old('email') }}" required autofocus placeholder="nama@email.com" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500 transition text-slate-800">
+                <input type="email" id="email" name="email" value="{{ old('email') }}" required autofocus placeholder="nama@email.com" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 transition text-slate-800">
             </div>
 
-            <button type="submit" class="w-full py-3 px-4 bg-sky-600 hover:bg-sky-700 text-white text-sm font-bold rounded-xl shadow-md transition">
+            <button type="submit" class="w-full py-3 px-4 bg-teal-700 hover:bg-teal-800 text-white text-sm font-bold rounded-xl shadow-xs transition">
                 Kirim Tautan Atur Ulang
             </button>
         </form>
 
         <div class="mt-8 pt-6 border-t border-slate-100 text-center text-xs text-slate-500">
-            Ingat password Anda? <a href="{{ route('login') }}" class="font-bold text-sky-600 hover:text-sky-700">Kembali ke Login</a>
+            Ingat password Anda? <a href="{{ route('login') }}" class="font-bold text-teal-700 hover:text-teal-800">Kembali ke Login</a>
         </div>
     </div>
 </div>

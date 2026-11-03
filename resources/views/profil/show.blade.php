@@ -13,19 +13,19 @@
             @method('PUT')
 
             <div class="flex items-center gap-4 pb-6 border-b border-slate-100">
-                <div class="w-16 h-16 rounded-2xl bg-gradient-to-tr from-sky-500 to-indigo-600 flex items-center justify-center text-white text-2xl font-bold shadow-md">
+                <div class="w-16 h-16 rounded-2xl bg-teal-700 flex items-center justify-center text-white text-2xl font-bold shadow-xs">
                     {{ substr($user->nama_lengkap ?? 'U', 0, 1) }}
                 </div>
                 <div>
                     <h3 class="text-lg font-bold text-slate-900">{{ $user->nama_lengkap }}</h3>
-                    <p class="text-xs text-slate-500 font-mono">@<span>{{ $user->username }}</span> &bull; <span class="uppercase font-semibold text-sky-600">{{ $user->role }}</span></p>
+                    <p class="text-xs text-slate-500 font-mono">@<span>{{ $user->username }}</span> &bull; <span class="uppercase font-semibold text-teal-700">{{ $user->role }}</span></p>
                 </div>
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
                     <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">Nama Lengkap</label>
-                    <input type="text" name="nama_lengkap" value="{{ old('nama_lengkap', $user->nama_lengkap) }}" required class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500 text-slate-800">
+                    <input type="text" name="nama_lengkap" value="{{ old('nama_lengkap', $user->nama_lengkap) }}" required class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 text-slate-800">
                 </div>
 
                 <div>
@@ -36,12 +36,12 @@
 
                 <div>
                     <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">Email</label>
-                    <input type="email" name="email" value="{{ old('email', $user->email) }}" required class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500 text-slate-800">
+                    <input type="email" name="email" value="{{ old('email', $user->email) }}" required class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 text-slate-800">
                 </div>
 
                 <div>
                     <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">Nomor HP / WhatsApp</label>
-                    <input type="text" name="no_hp" value="{{ old('no_hp', $user->no_hp) }}" required class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500 text-slate-800">
+                    <input type="text" name="no_hp" value="{{ old('no_hp', $user->no_hp) }}" required class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 text-slate-800">
                 </div>
             </div>
 
@@ -66,7 +66,7 @@
             </div>
 
             <div class="pt-4 flex justify-end">
-                <button type="submit" class="px-6 py-2.5 bg-sky-600 hover:bg-sky-700 text-white text-sm font-bold rounded-xl shadow-md transition">
+                <button type="submit" class="px-6 py-2.5 bg-teal-700 hover:bg-teal-800 text-white text-sm font-bold rounded-xl shadow-xs transition">
                     Simpan Perubahan
                 </button>
             </div>

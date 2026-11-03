@@ -269,7 +269,7 @@
             <!-- Row 2: Custom Trip -->
             <div class="flex items-center justify-between p-3.5 bg-slate-50 rounded-xl border border-slate-100 hover:bg-slate-100/70 transition">
                 <div class="flex items-center gap-3">
-                    <span class="px-2.5 py-1 rounded-md text-[10px] font-bold bg-sky-100 text-sky-900">
+                    <span class="px-2.5 py-1 rounded-md text-[10px] font-bold bg-teal-100 text-teal-900">
                         Custom Trip
                     </span>
                     <div>
