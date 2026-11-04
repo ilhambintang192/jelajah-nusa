@@ -209,6 +209,9 @@
     </form>
 </div>
 
+@endsection
+
+@push('scripts')
 <script>
     function itineraryManager() {
         return {
@@ -226,4 +229,4 @@
         }
     }
 </script>
-@endsection
+@endpush

@@ -1,7 +1,7 @@
 @extends('layouts.admin', ['title' => 'Refund & Pindah Jadwal'])
 
 @section('content')
-<div class="py-6 space-y-6" x-data="refundManager(@js($pemesananTerdampak), {{ $selectedPemesananId ? (int)$selectedPemesananId : 'null' }})">
+<div class="py-6 space-y-6" x-data="refundManager(@js($pemesananTerdampakData ?? $pemesananTerdampak), {{ $selectedPemesananId ? (int)$selectedPemesananId : 'null' }})">
     
     <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
@@ -158,12 +158,35 @@
                 <div x-show="jenisPengembalian === 'refund'" class="space-y-1.5">
                     <div class="flex items-center justify-between">
                         <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider">Nominal Refund (Rp)</label>
-                        <button type="button" x-show="selectedOrder" @click="nominalInput = selectedOrder.total_terbayar" class="text-[11px] font-bold text-teal-700 hover:underline">
+                        <button type="button" x-show="selectedOrder && selectedOrder.total_terbayar > 0" @click="nominalInput = selectedOrder.total_terbayar" class="text-[11px] font-bold text-teal-700 hover:underline">
                             Gunakan Refund Penuh
                         </button>
                     </div>
-                    <input type="number" name="nominal" x-model="nominalInput" min="1" :max="selectedOrder ? selectedOrder.total_terbayar : null" placeholder="Maks. total terbayar pemesan" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-800 font-mono">
-                    <p class="text-[11px] text-slate-400">Nominal pengembalian dana tidak boleh melebihi total yang telah dibayar wisatawan.</p>
+                    
+                    <div class="relative">
+                        <span class="absolute left-3.5 top-2.5 text-xs font-bold text-slate-400">Rp</span>
+                        <input type="number" 
+                               name="nominal" 
+                               x-model="nominalInput" 
+                               min="1" 
+                               :max="(selectedOrder && selectedOrder.total_terbayar > 0) ? selectedOrder.total_terbayar : null" 
+                               placeholder="Contoh: 500000" 
+                               class="w-full pl-9 pr-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-800 font-mono">
+                    </div>
+
+                    <div x-show="selectedOrder && selectedOrder.total_terbayar > 0" class="flex items-center justify-between text-[11px] text-slate-500">
+                        <span>Maksimal yang dapat dikembalikan:</span>
+                        <strong class="text-teal-800 font-mono" x-text="selectedOrder.total_terbayar_format"></strong>
+                    </div>
+
+                    <p x-show="selectedOrder && selectedOrder.total_terbayar > 0 && Number(nominalInput) > selectedOrder.total_terbayar" class="text-[11px] font-bold text-rose-600">
+                        Nominal refund melebihi batas dana terbayar (<span x-text="selectedOrder.total_terbayar_format"></span>).
+                    </p>
+
+                    <div x-show="selectedOrder && selectedOrder.total_terbayar <= 0" class="p-3 bg-amber-50 border border-amber-200 rounded-xl text-xs text-amber-800 space-y-1">
+                        <p class="font-bold">Pemesanan ini belum memiliki pembayaran terverifikasi.</p>
+                        <p class="text-[11px] text-amber-700">Total terbayar adalah Rp 0. Jika perjalanan ditunda, silakan gunakan opsi <strong>Pindah Jadwal</strong>.</p>
+                    </div>
                 </div>
 
                 <!-- Input Jadwal Baru jika Pindah Jadwal -->
@@ -258,22 +281,28 @@
     </div>
 </div>
 
+@endsection
+
+@push('scripts')
 <script>
     function refundManager(rawList, initialId) {
-        const orderList = rawList.map(o => ({
-            id: o.id,
-            display_kode: o.display_kode || ('PSN-' + o.id),
-            user_nama: o.user ? o.user.nama_lengkap : 'Wisatawan',
-            judul_trip: o.judul_trip || 'Trip',
-            total_terbayar: parseFloat(o.total_terbayar || 0),
-            total_terbayar_format: o.total_terbayar_format || ('Rp ' + parseFloat(o.total_terbayar || 0).toLocaleString('id-ID'))
-        }));
+        const orderList = (rawList || []).map(o => {
+            const terbayar = parseFloat(o.total_terbayar || 0);
+            return {
+                id: o.id,
+                display_kode: o.display_kode || ('PSN-' + o.id),
+                user_nama: o.user_nama || (o.user ? o.user.nama_lengkap : 'Wisatawan'),
+                judul_trip: o.judul_trip || 'Trip',
+                total_terbayar: terbayar,
+                total_terbayar_format: o.total_terbayar_format || ('Rp ' + terbayar.toLocaleString('id-ID'))
+            };
+        });
 
         let initOrder = null;
         let initNominal = '';
         if (initialId) {
             initOrder = orderList.find(o => o.id === initialId) || null;
-            if (initOrder) {
+            if (initOrder && initOrder.total_terbayar > 0) {
                 initNominal = initOrder.total_terbayar;
             }
         }
@@ -289,8 +318,10 @@
             pilihPemesanan(id) {
                 this.selectedId = id;
                 this.selectedOrder = this.orderList.find(o => o.id === id) || null;
-                if (this.selectedOrder) {
+                if (this.selectedOrder && this.selectedOrder.total_terbayar > 0) {
                     this.nominalInput = this.selectedOrder.total_terbayar;
+                } else {
+                    this.nominalInput = '';
                 }
                 const formEl = document.getElementById('formSection');
                 if (formEl) {
@@ -302,7 +333,7 @@
                 const numericId = parseInt(id);
                 this.selectedId = numericId || '';
                 this.selectedOrder = this.orderList.find(o => o.id === numericId) || null;
-                if (this.selectedOrder) {
+                if (this.selectedOrder && this.selectedOrder.total_terbayar > 0) {
                     this.nominalInput = this.selectedOrder.total_terbayar;
                 } else {
                     this.nominalInput = '';
@@ -317,4 +348,4 @@
         };
     }
 </script>
-@endsection
+@endpush

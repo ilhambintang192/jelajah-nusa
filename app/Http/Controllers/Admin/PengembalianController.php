@@ -56,9 +56,21 @@ class PengembalianController extends Controller
         $selectedPemesananId = $request->query('pemesanan_id');
         $selectedPemesanan = $selectedPemesananId ? $pemesananTerdampak->firstWhere('id', (int)$selectedPemesananId) : null;
 
+        $pemesananTerdampakData = $pemesananTerdampak->map(function ($p) {
+            return [
+                'id' => $p->id,
+                'display_kode' => $p->display_kode,
+                'user_nama' => $p->user?->nama_lengkap ?? 'Wisatawan',
+                'judul_trip' => $p->judul_trip,
+                'total_terbayar' => (float) $p->total_terbayar,
+                'total_terbayar_format' => $p->total_terbayar_format,
+            ];
+        })->values();
+
         return view('admin.pengembalian.index', compact(
             'riwayat',
             'pemesananTerdampak',
+            'pemesananTerdampakData',
             'jadwalTersedia',
             'selectedPemesananId',
             'selectedPemesanan'

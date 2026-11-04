@@ -24,6 +24,13 @@ class Pemesanan extends Model
         'status',
     ];
 
+    protected $appends = [
+        'total_terbayar',
+        'total_terbayar_format',
+        'display_kode',
+        'judul_trip',
+    ];
+
     protected function casts(): array
     {
         return [
@@ -70,6 +77,12 @@ class Pemesanan extends Model
 
     public function getTotalTerbayarAttribute(): float
     {
+        if ($this->relationLoaded('pembayaran')) {
+            return (float) $this->pembayaran
+                ->where('status', 'diverifikasi')
+                ->sum('nominal');
+        }
+
         return (float) $this->pembayaran()
             ->where('status', 'diverifikasi')
             ->sum('nominal');
