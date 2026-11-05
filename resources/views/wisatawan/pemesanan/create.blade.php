@@ -150,7 +150,7 @@
                     </div>
                 @endif
 
-                <!-- Formulir Data Peserta & Upload KTP matching Figma -->
+                <!-- Formulir Data Peserta & Upload KTP -->
                 <div class="space-y-4">
                     <div class="flex items-center justify-between">
                         <h3 class="text-base font-extrabold text-slate-900">Data dan Dokumen Identitas Peserta</h3>
@@ -197,7 +197,7 @@
                                 </div>
                             </div>
 
-                            <!-- Upload Foto KTP/Paspor Box matching Figma -->
+                            <!-- Upload Foto KTP/Paspor Box dengan Fitur Preview Nama File -->
                             <div>
                                 <label class="block text-xs font-bold text-slate-700 mb-1.5">Unggah Foto KTP / Paspor</label>
                                 <div class="border-2 border-dashed border-teal-500/60 bg-teal-50/30 rounded-2xl p-6 text-center hover:bg-teal-50/60 transition cursor-pointer relative">
@@ -205,17 +205,35 @@
                                            :name="'peserta[' + index + '][file_identitas]'" 
                                            required 
                                            accept=".jpg,.jpeg,.png"
-                                           class="absolute inset-0 w-full h-full opacity-0 cursor-pointer">
+                                           @change="handleFileUpload($event, index)"
+                                           class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10">
+                                    
                                     <div class="space-y-1.5 pointer-events-none">
                                         <div class="w-10 h-10 rounded-full bg-teal-100 text-teal-800 flex items-center justify-center mx-auto">
                                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg>
                                         </div>
-                                        <p class="text-xs font-bold text-teal-900">
-                                            Unggah foto KTP / Paspor — tarik &amp; lepas atau klik
-                                        </p>
-                                        <p class="text-[11px] text-slate-400">
-                                            JPG / PNG &bull; maks. 5 MB &bull; disimpan privat &amp; terenkripsi
-                                        </p>
+                                        
+                                        <!-- Tampilan Default jika Belum Ada File -->
+                                        <template x-if="!peserta.fileName">
+                                            <div>
+                                                <p class="text-xs font-bold text-teal-900">
+                                                    Unggah foto KTP / Paspor — tarik &amp; lepas atau klik
+                                                </p>
+                                                <p class="text-[11px] text-slate-400">
+                                                    JPG / PNG &bull; maks. 5 MB &bull; disimpan privat &amp; terenkripsi
+                                                </p>
+                                            </div>
+                                        </template>
+
+                                        <!-- Tampilan Nama File Setelah Diunggah -->
+                                        <template x-if="peserta.fileName">
+                                            <div class="pt-1">
+                                                <p class="text-xs font-extrabold text-emerald-700 bg-emerald-100/80 px-3 py-1.5 rounded-xl inline-block border border-emerald-300">
+                                                    ✓ Berhasil dipilih: <span x-text="peserta.fileName"></span>
+                                                </p>
+                                                <p class="text-[10px] text-slate-400 mt-1">Klik lagi jika ingin mengganti file</p>
+                                            </div>
+                                        </template>
                                     </div>
                                 </div>
                             </div>
@@ -227,7 +245,7 @@
 
         </div>
 
-        <!-- Right: Sticky Ringkasan Pesanan matching Figma (5 Cols) -->
+        <!-- Right: Sticky Ringkasan Pesanan (5 Cols) -->
         <div class="lg:col-span-5 space-y-6 lg:sticky lg:top-24">
             
             <div class="bg-white p-6 sm:p-7 rounded-3xl border border-slate-200/90 shadow-lg space-y-5">
@@ -258,7 +276,7 @@
                     </div>
                 @endif
 
-                <!-- Calculation Rows matching Figma -->
+                <!-- Calculation Rows -->
                 <div class="pt-4 border-t border-slate-100 space-y-2.5 text-xs">
                     <div class="flex justify-between text-slate-500">
                         <span>Harga per peserta</span>
@@ -287,7 +305,7 @@
                     </div>
                 </div>
 
-                <!-- Orange Continue Button matching Figma -->
+                <!-- Orange Continue Button -->
                 <div class="pt-2">
                     <button type="submit" 
                             form="booking-form"
@@ -313,7 +331,13 @@ function bookingFormManager(maxSeats, unitPrice, customPrice, isCustom) {
         unitPrice: isCustom ? (customPrice / maxSeats) : unitPrice,
         isCustom: isCustom,
         pesertaList: [
-            { nama_lengkap: '{{ auth()->user()->nama_lengkap ?? '' }}', jenis_identitas: 'ktp', no_identitas: '', no_hp: '{{ auth()->user()->no_hp ?? '' }}' }
+            { 
+                nama_lengkap: '{{ auth()->user()->nama_lengkap ?? '' }}', 
+                jenis_identitas: 'ktp', 
+                no_identitas: '', 
+                no_hp: '{{ auth()->user()->no_hp ?? '' }}',
+                fileName: ''
+            }
         ],
         get totalHarga() {
             if (this.isCustom) return customPrice;
@@ -324,7 +348,13 @@ function bookingFormManager(maxSeats, unitPrice, customPrice, isCustom) {
                 alert('Maksimal sisa kuota yang tersedia adalah ' + this.maxSeats + ' kursi.');
                 return;
             }
-            this.pesertaList.push({ nama_lengkap: '', jenis_identitas: 'ktp', no_identitas: '', no_hp: '' });
+            this.pesertaList.push({ 
+                nama_lengkap: '', 
+                jenis_identitas: 'ktp', 
+                no_identitas: '', 
+                no_hp: '',
+                fileName: ''
+            });
         },
         kurangiPeserta() {
             if (this.pesertaList.length > 1) {
@@ -334,6 +364,12 @@ function bookingFormManager(maxSeats, unitPrice, customPrice, isCustom) {
         hapusPeserta(index) {
             if (this.pesertaList.length > 1) {
                 this.pesertaList.splice(index, 1);
+            }
+        },
+        handleFileUpload(event, index) {
+            const file = event.target.files[0];
+            if (file) {
+                this.pesertaList[index].fileName = file.name;
             }
         },
         formatRupiah(angka) {

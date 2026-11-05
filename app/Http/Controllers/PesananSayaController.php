@@ -39,6 +39,7 @@ class PesananSayaController extends Controller
             'peserta.tiket',
             'pembayaran' => fn($q) => $q->orderBy('id', 'desc'),
             'tiket',
+            'pengembalian.jadwalBaru.paket',
         ])
         ->where('user_id', $request->user()->id)
         ->findOrFail($id);
@@ -60,5 +61,50 @@ class PesananSayaController extends Controller
         $this->bookingService->cancelBooking($pemesanan, 'Dibatalkan oleh wisatawan.');
 
         return back()->with('sukses', 'Pesanan Anda telah berhasil dibatalkan. Kuota telah dikembalikan.');
+    }
+
+    /**
+     * Wisatawan Mengajukan Pembatalan & Refund untuk Ditinjau/Diverifikasi Admin.
+     */
+    public function ajukanBatal(Request $request, int $id): RedirectResponse
+    {
+        $pemesanan = Pemesanan::where('user_id', $request->user()->id)->findOrFail($id);
+
+        if ($pemesanan->status === 'dibatalkan') {
+            return back()->with('error', 'Pesanan ini sudah dibatalkan sebelumnya.');
+        }
+
+        $validated = $request->validate([
+            'alasan' => 'required|string|min:5|max:500',
+            'nama_bank' => 'required|string|max:100',
+            'no_rekening' => 'required|string|max:50',
+            'atas_nama' => 'required|string|max:100',
+            'no_whatsapp' => 'nullable|string|max:20',
+        ], [
+            'alasan.required' => 'Alasan pembatalan wajib diisi.',
+            'alasan.min' => 'Alasan pembatalan minimal 5 karakter.',
+            'nama_bank.required' => 'Nama bank atau e-wallet tujuan refund wajib diisi.',
+            'no_rekening.required' => 'Nomor rekening atau e-wallet wajib diisi.',
+            'atas_nama.required' => 'Nama pemilik rekening wajib diisi.',
+        ]);
+
+        $payload = [
+            'alasan' => $validated['alasan'],
+            'nama_bank' => $validated['nama_bank'],
+            'no_rekening' => $validated['no_rekening'],
+            'atas_nama' => $validated['atas_nama'],
+            'no_whatsapp' => $validated['no_whatsapp'] ?? $request->user()->no_hp,
+            'tanggal' => now()->translatedFormat('d F Y H:i'),
+        ];
+
+        \App\Models\LogAktivitas::catat(
+            aksi: 'pengajuan_pembatalan',
+            subjekTipe: 'Pemesanan',
+            subjekId: $pemesanan->id,
+            keterangan: json_encode($payload),
+            userId: $request->user()->id
+        );
+
+        return back()->with('sukses', 'Permohonan pembatalan & pengembalian dana telah berhasil diajukan ke Admin. Tim kami akan segera meninjau dan memproses refund Anda.');
     }
 }

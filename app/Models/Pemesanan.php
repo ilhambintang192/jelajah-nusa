@@ -139,4 +139,32 @@ class Pemesanan extends Model
         }
         return null;
     }
+
+    public function getPembayaranMenungguAttribute(): ?Pembayaran
+    {
+        if ($this->relationLoaded('pembayaran')) {
+            return $this->pembayaran->firstWhere('status', 'menunggu');
+        }
+
+        return $this->pembayaran()->where('status', 'menunggu')->latest('id')->first();
+    }
+
+    public function getPengajuanBatalAttribute(): ?array
+    {
+        $log = LogAktivitas::where('subjek_tipe', 'Pemesanan')
+            ->where('subjek_id', $this->id)
+            ->where('aksi', 'pengajuan_pembatalan')
+            ->latest('id')
+            ->first();
+
+        if (!$log) {
+            return null;
+        }
+
+        $decoded = json_decode($log->keterangan, true);
+        return is_array($decoded) ? $decoded : [
+            'alasan' => $log->keterangan,
+            'tanggal' => $log->created_at->translatedFormat('d F Y H:i'),
+        ];
+    }
 }

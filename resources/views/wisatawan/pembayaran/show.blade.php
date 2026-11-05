@@ -89,7 +89,58 @@
                 </div>
             @endforeach
 
-            @if($pemesanan->sisa_tagihan > 0 && $pemesanan->status !== 'dibatalkan')
+            @php
+                $pembayaranMenunggu = $pemesanan->pembayaran->firstWhere('status', 'menunggu');
+            @endphp
+
+            @if($pembayaranMenunggu)
+                <!-- Card Menunggu Verifikasi (Sekali Bayar — Bukti Sudah Terkirim) -->
+                <div class="p-6 bg-teal-50/70 border-2 border-teal-600/30 rounded-3xl text-center space-y-4">
+                    <div class="w-14 h-14 bg-teal-100 text-teal-700 rounded-full flex items-center justify-center mx-auto text-2xl font-bold">
+                        ✓
+                    </div>
+                    <div>
+                        <span class="px-3 py-1 rounded-full text-xs font-extrabold uppercase bg-amber-100 text-amber-800 tracking-wider">
+                            Menunggu Verifikasi Admin
+                        </span>
+                        <h4 class="text-lg font-extrabold text-slate-900 mt-2">Bukti Pembayaran Berhasil Dikirim!</h4>
+                        <p class="text-xs text-slate-500 max-w-md mx-auto mt-1">
+                            Anda telah mengunggah bukti transfer sebesar <strong class="text-slate-900 font-mono">{{ $pembayaranMenunggu->nominal_format }}</strong> pada {{ $pembayaranMenunggu->tanggal_bayar->translatedFormat('d F Y') }}. Admin kami sedang memverifikasi dana Anda.
+                        </p>
+                    </div>
+
+                    <div class="p-4 bg-white rounded-2xl border border-slate-200 text-xs text-left max-w-md mx-auto space-y-2.5">
+                        <div class="flex justify-between">
+                            <span class="text-slate-400">Nomor Pesanan:</span>
+                            <span class="font-bold text-slate-800 font-mono">{{ $pemesanan->display_kode }}</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-slate-400">Jumlah Ditransfer:</span>
+                            <span class="font-bold text-teal-800 font-mono">{{ $pembayaranMenunggu->nominal_format }}</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-slate-400">Tanggal Transfer:</span>
+                            <span class="font-medium text-slate-700">{{ $pembayaranMenunggu->tanggal_bayar->translatedFormat('d F Y') }}</span>
+                        </div>
+                        <div class="flex justify-between items-center pt-2 border-t border-slate-100">
+                            <span class="text-slate-400">Berkas Bukti:</span>
+                            <a href="{{ route('dokumen.bukti', $pembayaranMenunggu->id) }}" target="_blank" class="text-teal-700 font-bold hover:underline flex items-center gap-1">
+                                Lihat Berkas Bukti &nearr;
+                            </a>
+                        </div>
+                    </div>
+
+                    <p class="text-[11px] text-slate-400">
+                        Sistem menggunakan skema <strong>sekali bayar lunas</strong>. Anda tidak perlu membayar ulang selagi bukti pembayaran sedang ditinjau. E-Tiket ber-QR Code akan terbit otomatis begitu admin menyetujui.
+                    </p>
+
+                    <div class="pt-2 flex justify-center gap-3">
+                        <a href="{{ route('pesanan-saya.show', $pemesanan->id) }}" class="px-5 py-2.5 bg-slate-900 hover:bg-slate-800 text-white font-bold rounded-xl text-xs transition">
+                            Lihat Status di Pesanan Saya &rarr;
+                        </a>
+                    </div>
+                </div>
+            @elseif($pemesanan->sisa_tagihan > 0 && $pemesanan->status !== 'dibatalkan')
                 <form action="{{ route('pembayaran.store', $pemesanan->id) }}" method="POST" enctype="multipart/form-data" class="space-y-4">
                     @csrf
 

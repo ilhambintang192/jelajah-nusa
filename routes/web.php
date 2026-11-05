@@ -125,6 +125,7 @@ Route::middleware(['auth', 'role:wisatawan,admin'])->group(function () {
     Route::get('/pesanan-saya', [PesananSayaController::class, 'index'])->name('pesanan-saya.index');
     Route::get('/pesanan-saya/{id}', [PesananSayaController::class, 'show'])->name('pesanan-saya.show');
     Route::post('/pesanan-saya/{id}/batal', [PesananSayaController::class, 'batal'])->name('pesanan-saya.batal');
+    Route::post('/pesanan-saya/{id}/ajukan-batal', [PesananSayaController::class, 'ajukanBatal'])->name('pesanan-saya.ajukan-batal');
 
     // Custom Trip
     Route::get('/custom-trip', [CustomTripController::class, 'index'])->name('custom-trip.index');

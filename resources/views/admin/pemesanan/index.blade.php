@@ -65,10 +65,20 @@
                                 <td class="py-3.5 px-2 text-center">
                                     <span class="px-2 py-0.5 rounded-md bg-slate-100 font-bold">{{ $item->jumlah_peserta }}</span>
                                 </td>
-                                <td class="py-3.5 px-3">
-                                    <span class="px-2.5 py-1 rounded-full text-[10px] font-bold uppercase {{ $item->status === 'dikonfirmasi' ? 'bg-emerald-50 text-emerald-700' : ($item->status === 'menunggu' ? 'bg-amber-50 text-amber-700' : 'bg-rose-50 text-rose-700') }}">
+                                <td class="py-3.5 px-3 space-y-1">
+                                    <span class="inline-block px-2.5 py-1 rounded-full text-[10px] font-bold uppercase {{ $item->status === 'dikonfirmasi' ? 'bg-emerald-50 text-emerald-700' : ($item->status === 'menunggu' ? 'bg-amber-50 text-amber-700' : 'bg-rose-50 text-rose-700') }}">
                                         {{ $item->status }}
                                     </span>
+                                    @if($item->pembayaran_menunggu)
+                                        <span class="block text-[10px] font-bold text-teal-800 bg-teal-100/90 px-2 py-0.5 rounded-md text-center">
+                                            ● Bukti Diunggah
+                                        </span>
+                                    @endif
+                                    @if($item->pengajuan_batal && $item->status !== 'dibatalkan')
+                                        <span class="block text-[10px] font-bold text-rose-800 bg-rose-100/90 px-2 py-0.5 rounded-md text-center">
+                                            ⚠ Ajukan Batal
+                                        </span>
+                                    @endif
                                 </td>
                                 <td class="py-3.5 px-2 text-right">
                                     <a href="{{ route('admin.pemesanan.index', ['selected' => $item->id, 'status' => $status, 'cari' => $search]) }}" class="px-2.5 py-1 bg-white border border-slate-200 hover:border-teal-600 hover:text-teal-700 text-slate-700 rounded-lg text-[11px] font-bold shadow-2xs">
@@ -120,6 +130,47 @@
                             <span class="text-sm font-extrabold text-emerald-600">{{ $selectedPemesanan->total_terbayar_format }}</span>
                         </div>
                     </div>
+
+                    <!-- Notifikasi Pembayaran Menunggu Verifikasi -->
+                    @if($selectedPemesanan->pembayaran_menunggu)
+                        <div class="p-4 bg-teal-50 border border-teal-200 rounded-2xl flex items-center justify-between gap-3">
+                            <div class="min-w-0">
+                                <span class="px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-amber-100 text-amber-800 uppercase tracking-wider">Bukti Transfer Diunggah</span>
+                                <p class="text-xs font-bold text-slate-900 mt-1">Nominal: {{ $selectedPemesanan->pembayaran_menunggu->nominal_format }}</p>
+                                <p class="text-[11px] text-slate-500">Tgl: {{ $selectedPemesanan->pembayaran_menunggu->tanggal_bayar->format('d/m/Y') }}</p>
+                            </div>
+                            <a href="{{ route('admin.pembayaran.index', ['selected' => $selectedPemesanan->pembayaran_menunggu->id]) }}" class="px-3.5 py-2 bg-teal-700 hover:bg-teal-800 text-white text-xs font-bold rounded-xl transition shrink-0 shadow-2xs">
+                                Verifikasi Sekarang &rarr;
+                            </a>
+                        </div>
+                    @endif
+
+                    <!-- Notifikasi Pengajuan Pembatalan / Refund oleh Wisatawan -->
+                    @if($selectedPemesanan->pengajuan_batal)
+                        <div class="p-4 bg-rose-50 border border-rose-200 rounded-2xl space-y-2">
+                            <div class="flex items-center justify-between">
+                                <span class="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold uppercase bg-rose-100 text-rose-800">
+                                    Pengajuan Pembatalan Wisatawan
+                                </span>
+                                <span class="text-[10px] text-slate-400">{{ $selectedPemesanan->pengajuan_batal['tanggal'] ?? '' }}</span>
+                            </div>
+                            <p class="text-xs text-slate-700"><strong>Alasan:</strong> {{ $selectedPemesanan->pengajuan_batal['alasan'] ?? '—' }}</p>
+                            <div class="p-2.5 bg-white rounded-xl border border-rose-100 text-[11px] text-slate-600 space-y-0.5">
+                                <p><strong>Rekening Refund:</strong> {{ $selectedPemesanan->pengajuan_batal['nama_bank'] ?? '' }} - {{ $selectedPemesanan->pengajuan_batal['no_rekening'] ?? '' }}</p>
+                                <p><strong>Atas Nama:</strong> {{ $selectedPemesanan->pengajuan_batal['atas_nama'] ?? '' }}</p>
+                                @if(!empty($selectedPemesanan->pengajuan_batal['no_whatsapp']))
+                                    <p><strong>WhatsApp:</strong> {{ $selectedPemesanan->pengajuan_batal['no_whatsapp'] }}</p>
+                                @endif
+                            </div>
+                            @if($selectedPemesanan->status !== 'dibatalkan')
+                                <div class="pt-1">
+                                    <a href="{{ route('admin.pengembalian.index', ['pemesanan_id' => $selectedPemesanan->id]) }}" class="px-3.5 py-1.5 bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold rounded-xl transition inline-flex items-center gap-1 shadow-2xs">
+                                        Proses Pembatalan &amp; Refund &rarr;
+                                    </a>
+                                </div>
+                            @endif
+                        </div>
+                    @endif
 
                     <!-- Dokumen Peserta Terdaftar (F3-02, BR-13, BR-14) -->
                     <div>
